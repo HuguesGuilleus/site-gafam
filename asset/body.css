@@ -1,0 +1,39 @@
+body {
+	margin: 0;
+	font-family: Noto Sans;
+}
+
+img {
+	width: 100%;
+}
+
+header {
+	background: #ffbdc5;
+	padding: 2ex max(2ex, calc(50% - 50ex));
+
+	.title {
+		font-size: 200%
+	}
+}
+
+.copy {
+	padding: 0 .5ex;
+	font-weight: bold;
+	color: white;
+	background: #c50042;
+	text-decoration: none;
+}
+
+ul.items {
+	margin: 2ex;
+	padding: 0;
+
+	.item {
+		max-width: 100ex;
+		margin: 0 auto 1ex;
+		border: solid .4ex;
+		display: grid;
+		grid-template-columns: 10ex 1fr;
+		gap: 1ex;
+	}
+}
