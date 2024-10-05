@@ -3,8 +3,14 @@ body {
 	font-family: Noto Sans;
 }
 
-img {
-	width: 100%;
+a {
+	color: inherit;
+	background: #5555;
+	text-decoration: none;
+
+	&:not(.copy):hover {
+		background: dodgerblue;
+	}
 }
 
 header {
@@ -14,6 +20,32 @@ header {
 	.title {
 		font-size: 200%
 	}
+
+	&.c {
+		padding: 2ex;
+	}
+}
+
+main {
+	max-width: 100ex;
+	margin: auto;
+	padding: 2ex;
+}
+
+main.and2toc {
+	max-width: 100%;
+	display: grid;
+	grid-template-columns: 30ex minmax(0, 100ex);
+	grid-template-columns: 30ex 1fr;
+}
+
+ul.toc {
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin-bottom: .5ex;
+	}
 }
 
 .copy {
@@ -22,18 +54,59 @@ header {
 	color: white;
 	background: #c50042;
 	text-decoration: none;
+
+	&:hover {
+		box-shadow: 0 0 .2ex .4ex grey;
+	}
+}
+
+h1>a.copy {
+	vertical-align: middle;
+	font-size: 60%;
+}
+
+div.imgs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1ex;
+
+	img {
+		width: 18.8ex;
+		padding: 0;
+	}
 }
 
 ul.items {
-	margin: 2ex;
 	padding: 0;
 
 	.item {
-		max-width: 100ex;
-		margin: 0 auto 1ex;
+		list-style: none;
+		margin-bottom: 1ex;
 		border: solid .4ex;
-		display: grid;
-		grid-template-columns: 10ex 1fr;
-		gap: 1ex;
+		padding: .5ex;
+
+		&::after {
+			content: "";
+			display: block;
+			clear: both;
+		}
+
+		img {
+			width: 15ex;
+			float: left;
+			margin-right: .5ex;
+		}
+
+		.title {
+			font-weight: bold;
+		}
+
+		div.emptyline {
+			height: 2ex;
+		}
+
+		p {
+			margin: 0;
+		}
 	}
 }

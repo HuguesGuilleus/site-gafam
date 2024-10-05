@@ -19,16 +19,16 @@ type Playlist struct {
 }
 
 func FetchPlaylist(t *tool.Tool, id string) *Playlist {
-	body := tool.FetchAll(context.Background(), t, "GET", "https://www.youtube.com/playlist?list="+id, nil, nil)
+	body := tool.FetchAll(context.Background(), t, "", "https://www.youtube.com/playlist?list="+id, nil, nil)
 
 	_, src, ok := bytes.Cut(body, []byte("var ytInitialData = "))
 	if !ok {
-		t.Warn("wrong HTML format for channel", "id", id)
+		t.Warn("wrong HTML format for playlist", "id", id)
 		return nil
 	}
 	src, _, ok = bytes.Cut(src, []byte(";</script>"))
 	if !ok {
-		t.Warn("wrong HTML format for channel", "id", id)
+		t.Warn("wrong HTML format for playlist", "id", id)
 		return nil
 	}
 
@@ -96,10 +96,11 @@ type ChannelItem struct {
 }
 
 type VideoItem struct {
-	Id       string
-	Title    string
-	Author   ChannelItem
-	Duration time.Duration
+	Id          string
+	Title       string
+	Author      ChannelItem
+	Duration    time.Duration
+	Description string
 }
 
 type playlistItemDTO struct {
