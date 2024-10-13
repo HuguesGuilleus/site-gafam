@@ -85,13 +85,18 @@ func renderAll(t *tool.Tool, base string, news []IndexVideoItem, index []*Index)
 
 func videosCarousel(videos []IndexVideoItem) render.Node {
 	slices.SortFunc(videos, func(a, b IndexVideoItem) int { return b.Published.Compare(a.Published) })
-	return render.N("div.imgs", render.Slice(videos, func(_ int, video IndexVideoItem) render.Node {
-		return render.No("a.copy", render.A("href", "https://youtu.be/"+video.Id),
-			render.No("img", render.
-				A("src", "vi/"+video.Id+".jpg").
+	return render.N("div.imgs", render.S(videos, "", func(video IndexVideoItem) render.Node {
+		return render.Na("a.copy.wi", "href", "https://youtu.be/"+video.Id).N(
+			render.Na("img", "src", "vi/"+video.Id+".jpg").
 				A("loading", "lazy").
-				A("title", video.Title+" @"+video.AuthorName+" ["+video.Published.Format("2006-01-02")+"] vue: "+strconv.FormatUint(uint64(video.View), 10)),
-			),
+				A("width", "480").
+				A("height", "360").
+				A("title",
+					video.Title+
+						" @"+video.AuthorName+
+						" ["+video.Published.Format("2006-01-02")+
+						"] vue: "+strconv.FormatUint(uint64(video.View), 10),
+				).N(),
 		)
 	}))
 }

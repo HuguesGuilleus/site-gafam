@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"frontend-gafam/rss"
 	"frontend-gafam/youtube"
 	"log/slog"
 	"os"
@@ -32,4 +33,6 @@ func main() {
 	}(time.Now())
 
 	youtube.Do(t, &ytTodo)
+
+	rss.Do(t)
 }

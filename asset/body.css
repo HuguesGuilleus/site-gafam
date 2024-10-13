@@ -58,6 +58,11 @@ ul.toc {
 	&:hover {
 		box-shadow: 0 0 .2ex .4ex grey;
 	}
+
+	&.wi {
+		padding: 0;
+		background: black;
+	}
 }
 
 h1>a.copy {
@@ -72,6 +77,7 @@ div.imgs {
 
 	img {
 		width: 18.8ex;
+		height: auto;
 		padding: 0;
 	}
 }
