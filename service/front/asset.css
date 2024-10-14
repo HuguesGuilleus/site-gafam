@@ -1,0 +1,111 @@
+body {
+	margin: 0;
+	font-family: Noto Sans;
+}
+
+header {
+	padding: 2ex max(2ex, calc(50% - 50ex));
+	background: #FBC;
+
+	.title {
+		font-size: 200%;
+		font-weight: bold;
+	}
+
+	&.withToc {
+		padding: 2ex;
+	}
+}
+
+main {
+	max-width: 100ex;
+	margin: auto;
+	padding: 2ex;
+
+	&.withToc {
+		max-width: 100%;
+		display: grid;
+		grid-template-columns: 30ex 1fr;
+
+		ul.toc {
+			padding: 0;
+			list-style: none;
+
+			li {
+				margin-bottom: .5ex;
+			}
+		}
+	}
+}
+
+ul.items {
+	padding: 0;
+
+	li.item {
+		margin-bottom: 1ex;
+		border: solid .4ex;
+		padding: .5ex;
+		list-style: none;
+
+		&::after {
+			content: "";
+			display: block;
+			clear: both;
+		}
+
+		img {
+			margin-right: .5ex;
+			float: left;
+		}
+
+		.title {
+			font-weight: bold;
+		}
+
+		div.emptyline {
+			height: 2ex;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+}
+
+div.imgs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1ex;
+}
+
+img {
+	height: 10ex;
+	width: auto;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+	background: #5555;
+
+	&:not(.copy):hover {
+		background: dodgerblue;
+	}
+}
+
+.copy {
+	padding: 0 .5ex;
+	font-weight: bold;
+	text-decoration: none;
+	color: white;
+	background: #c50042;
+
+	&:hover {
+		box-shadow: 0 0 .2ex .4ex grey;
+	}
+
+	&.wi {
+		padding: 0;
+		background: transparent;
+	}
+}
