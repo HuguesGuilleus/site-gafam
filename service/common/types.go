@@ -28,6 +28,7 @@ type Item struct {
 	Author      string
 	Published   time.Time
 	Updated     time.Time
+	Duration    time.Duration
 	Like        uint
 	View        uint
 

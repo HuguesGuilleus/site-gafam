@@ -5,7 +5,6 @@ import (
 	"flag"
 	"frontend-gafam/service"
 	"frontend-gafam/youtube"
-	"io"
 	"log/slog"
 	"os"
 	"sniffle/myhandler"
@@ -34,7 +33,7 @@ func main() {
 	}
 
 	t := tool.New(&tool.Config{
-		Logger:    slog.New(myhandler.New(io.Discard, slog.LevelInfo)),
+		Logger:    slog.New(myhandler.New(os.Stderr, slog.LevelInfo)),
 		HostURL:   "localhost",
 		Writefile: writefile.Os("public"),
 		Fetcher: []fetch.Fetcher{

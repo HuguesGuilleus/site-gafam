@@ -5,6 +5,7 @@ import (
 	"frontend-gafam/service/common"
 	"frontend-gafam/service/front"
 	"frontend-gafam/service/peertube"
+	"frontend-gafam/service/twitch"
 	"frontend-gafam/service/youtube"
 	"slices"
 	"sniffle/tool"
@@ -25,23 +26,24 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 	index.Lists = make([]*common.List, 0, len(urls))
 
 	for _, u := range urls {
-		list := (*common.List)(nil)
 		proto, id, _ := strings.Cut(u, ":")
 		switch proto {
 		case "yt.ch":
-			list = youtube.ChannelRSS(t, id)
+			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
 		case "yt.pl":
-			list = youtube.PlaylistRSS(t, id)
+			index.Lists = append(index.Lists, youtube.PlaylistRSS(t, id))
 		case "peertube.ch":
-			list = peertube.Channel(t, id)
+			index.Lists = append(index.Lists, peertube.Channel(t, id))
+		case "twitch.ch":
+			index.Lists = append(index.Lists, twitch.Channel(t, id))
+		case "twitch.te":
+			index.Lists = append(index.Lists, twitch.Team(t, id)...)
 		default:
 			t.Warn("unknown.urlproto", "proto", proto, "id", id)
 			continue
 		}
-		if list != nil {
-			index.Lists = append(index.Lists, list)
-		}
 	}
+	index.Lists = slices.DeleteFunc(index.Lists, func(list *common.List) bool { return list == nil })
 	slices.SortStableFunc(index.Lists, func(a, b *common.List) int {
 		return cmp.Compare(strings.ToLower(a.Title), strings.ToLower(b.Title))
 	})
