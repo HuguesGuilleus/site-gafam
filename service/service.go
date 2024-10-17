@@ -32,7 +32,9 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
 		case "yt.pl":
 			index.Lists = append(index.Lists, youtube.PlaylistRSS(t, id))
-		case "peertube.ch":
+		case "peertube.a":
+			index.Lists = append(index.Lists, peertube.User(t, id))
+		case "peertube.c":
 			index.Lists = append(index.Lists, peertube.Channel(t, id))
 		case "twitch.ch":
 			index.Lists = append(index.Lists, twitch.Channel(t, id))

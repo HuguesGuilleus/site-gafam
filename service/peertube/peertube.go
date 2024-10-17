@@ -10,6 +10,24 @@ import (
 	"time"
 )
 
+func User(t *tool.Tool, handle string) *common.List {
+	name, host, _ := strings.Cut(handle, "@")
+	if host == "" || name == "" {
+		t.Warn("wrongHandleFormat", "handle", handle)
+		return nil
+	}
+
+	dto := struct {
+		ID int
+	}{}
+	if tool.FetchJSON(context.Background(), t, "", "https://"+host+"/api/v1/accounts/"+handle, nil, nil, &dto) {
+		return nil
+	}
+
+	return fetchData(t, handle, name, host,
+		"https://"+host+"/feeds/videos.xml?accountId="+strconv.Itoa(dto.ID))
+}
+
 func Channel(t *tool.Tool, handle string) *common.List {
 	name, host, _ := strings.Cut(handle, "@")
 	if host == "" || name == "" {
@@ -24,11 +42,11 @@ func Channel(t *tool.Tool, handle string) *common.List {
 		return nil
 	}
 
-	return fetchChannelData(t, handle, name, host, strconv.Itoa(dto.ID))
+	return fetchData(t, handle, name, host,
+		"https://"+host+"/feeds/videos.xml?videoChannelId="+strconv.Itoa(dto.ID))
 }
 
-func fetchChannelData(t *tool.Tool, handle, handleName, host, id string) *common.List {
-	url := "https://" + host + "/feeds/videos.xml?videoChannelId=" + id
+func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List {
 	x := tool.FetchAll(context.Background(), t, "", url, nil, nil)
 	dto := struct {
 		Channel struct {
