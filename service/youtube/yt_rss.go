@@ -52,6 +52,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 		poster, width, height := common.FetchPoster(t,
 			"https://img.youtube.com/vi/"+entry.ID+"/hqdefault.jpg")
 		items[i] = &common.Item{
+			Host:         "youtube",
 			ID:           entry.ID,
 			URL:          "https://www.youtube.com/watch?v=" + entry.ID,
 			Title:        entry.Title,

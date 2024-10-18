@@ -21,6 +21,7 @@ type List struct {
 
 // One video, image or post.
 type Item struct {
+	Host        string
 	ID          string
 	URL         string
 	Title       string

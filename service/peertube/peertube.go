@@ -95,6 +95,7 @@ func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List 
 		}
 
 		items = append(items, &common.Item{
+			Host:         host,
 			ID:           id,
 			URL:          entry.Link,
 			Title:        entry.Title,

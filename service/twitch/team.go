@@ -98,6 +98,7 @@ func Channel(t *tool.Tool, id string) *common.List {
 				poster, width, height := common.FetchPoster(t, video.PosterURL)
 
 				list.Items = append(list.Items, &common.Item{
+					Host:         "twitch",
 					ID:           video.ID,
 					URL:          "https://www.twitch.tv/videos/" + video.ID,
 					Title:        video.Title,

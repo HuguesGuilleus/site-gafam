@@ -9,20 +9,6 @@ import (
 	"time"
 )
 
-func Render(t *tool.Tool, base string, index *common.Index) {
-	base = strings.TrimRight(base, "/")
-
-	renderIndex(t, base, index)
-
-	for _, list := range index.Lists {
-		t.WriteFile(base+"/"+list.ID+".json", list.JSON)
-		renderChannel(t, base, list)
-		for _, item := range list.Items {
-			t.WriteFile(base+"/_icon/"+item.ID+".jpg", item.Poster)
-		}
-	}
-}
-
 func RenderTitles(t *tool.Tool, titles map[string][]string) {
 	t.WriteFile("/index.html", render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head", begin, render.N("title", "Index")),
@@ -33,6 +19,21 @@ func RenderTitles(t *tool.Tool, titles map[string][]string) {
 			})),
 		),
 	)))
+}
+
+func Render(t *tool.Tool, base string, index *common.Index) {
+	base = strings.TrimRight(base, "/")
+
+	renderIndex(t, base, index)
+
+	for _, list := range index.Lists {
+		t.WriteFile(base+"/"+list.ID+".json", list.JSON)
+		renderChannel(t, base, list)
+		for _, item := range list.Items {
+			t.WriteFile("/_icon/"+item.Host+"_"+item.ID+".jpg", item.Poster)
+			renderOne(t, item)
+		}
+	}
 }
 
 func renderIndex(t *tool.Tool, base string, index *common.Index) {
@@ -78,7 +79,7 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 				carousel(list.Items),
 				render.N("ul.items", render.S(list.Items, "", func(item *common.Item) render.Node {
 					return render.N("li.item",
-						render.Na("img", "src", "_icon/"+item.ID+".jpg").
+						render.Na("img", "src", "../_icon/"+item.Host+"_"+item.ID+".jpg").
 							A("width", item.PosterWidth).
 							A("height", item.PosterHeight).
 							A("loading", "lazy").
@@ -108,14 +109,48 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 
 func carousel(items []*common.Item) render.Node {
 	return render.N("div.imgs", render.S(items, "", func(item *common.Item) render.Node {
-		return render.Na("a.copy.wi", "href", item.URL).
-			N(render.Na("img", "src", "_icon/"+item.ID+".jpg").
+		return render.Na("a.wi", "href", "../_"+item.Host+"_"+item.ID+".html").
+			N(render.Na("img", "src", "../_icon/"+item.Host+"_"+item.ID+".jpg").
 				A("width", item.PosterWidth).
 				A("height", item.PosterHeight).
 				A("loading", "lazy").
 				A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).N(),
 			)
 	}))
+}
+
+func renderOne(t *tool.Tool, item *common.Item) {
+	t.WriteFile("/_"+item.Host+"_"+item.ID+".html", render.Merge(render.Na("html", "lang", "fr").N(
+		render.N("head", begin, render.N("title", item.Title)),
+		render.N("body",
+			render.N("header",
+				render.N("div.title", render.Na("a", "href", "index.html").N("<~"), " ", item.Title),
+				render.N("p", render.Na("a.copy", "href", item.URL).N(item.ID)),
+				render.N("div",
+					"[ like: ", item.Like, " | vue: ", item.View,
+					render.IfS(item.Duration != 0, render.N("", " | ", item.Duration)),
+					" ] @",
+					item.Author,
+					item.Published.In(time.Local).Format(" (2006-01-02 15:04:05)"),
+				),
+			),
+			render.N("main",
+				render.N("div.imgs", render.Na("img", "src", "_icon/"+item.Host+"_"+item.ID+".jpg").
+					A("width", item.PosterWidth).
+					A("height", item.PosterHeight).
+					A("loading", "lazy").
+					A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).
+					N(),
+				),
+				render.N("br"),
+				render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {
+					return render.Na("a.copy", "href", s.URL).
+						N(render.Int(s.Height), "p")
+				})),
+				renderDescription(item.Description),
+			),
+		),
+	)))
 }
 
 func renderDescription(description []string) []render.Node {

@@ -79,6 +79,7 @@ div.imgs {
 }
 
 img {
+	display: block;
 	height: 10ex;
 	width: auto;
 }
