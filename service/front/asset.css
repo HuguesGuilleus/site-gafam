@@ -78,16 +78,28 @@ div.imgs {
 	gap: 1ex;
 }
 
+.slides {
+	background: #000;
+	padding: 1ex;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1ex;
+
+	& img {
+		height: 11ex;
+	}
+}
+
 img {
 	display: block;
-	height: 10ex;
+	height: 13ex;
 	width: auto;
 }
 
 a {
 	text-decoration: none;
 	color: inherit;
-	background: #5555;
+	background: #CCC;
 
 	&:not(.copy):hover {
 		background: dodgerblue;

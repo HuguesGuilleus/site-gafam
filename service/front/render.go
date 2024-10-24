@@ -31,6 +31,9 @@ func Render(t *tool.Tool, base string, index *common.Index) {
 		renderChannel(t, base, list)
 		for _, item := range list.Items {
 			t.WriteFile("/_icon/"+item.Host+"_"+item.ID+".jpg", item.Poster)
+			for i, data := range item.PosterAnnex {
+				t.WriteFile(fmt.Sprintf("/_icon/%s_%s_%d.jpg", item.Host, item.ID, i), data)
+			}
 			renderOne(t, item)
 		}
 	}
@@ -109,14 +112,25 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 
 func carousel(items []*common.Item) render.Node {
 	return render.N("div.imgs", render.S(items, "", func(item *common.Item) render.Node {
-		return render.Na("a.wi", "href", "../_"+item.Host+"_"+item.ID+".html").
-			N(render.Na("img", "src", "../_icon/"+item.Host+"_"+item.ID+".jpg").
-				A("width", item.PosterWidth).
-				A("height", item.PosterHeight).
-				A("loading", "lazy").
-				A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).N(),
-			)
+		href := "../_" + item.Host + "_" + item.ID + ".html"
+		src0 := "../_icon/" + item.Host + "_" + item.ID + ".jpg"
+		if len(item.PosterAnnex) == 0 {
+			return render.Na("a.wi", "href", href).N(carrouselOne(item, src0))
+		}
+		return render.Na("a.wi.slides", "href", href).N(
+			carrouselOne(item, src0),
+			render.S2(item.PosterAnnex, "", func(i int, _ []byte) render.Node {
+				return carrouselOne(item, fmt.Sprintf("../_icon/%s_%s_%d.jpg", item.Host, item.ID, i))
+			}),
+		)
 	}))
+}
+func carrouselOne(item *common.Item, src string) render.Node {
+	return render.Na("img.open", "src", src).
+		A("width", item.PosterWidth).
+		A("height", item.PosterHeight).
+		A("loading", "lazy").
+		A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).N()
 }
 
 func renderOne(t *tool.Tool, item *common.Item) {
@@ -135,12 +149,11 @@ func renderOne(t *tool.Tool, item *common.Item) {
 				),
 			),
 			render.N("main",
-				render.N("div.imgs", render.Na("img", "src", "_icon/"+item.Host+"_"+item.ID+".jpg").
-					A("width", item.PosterWidth).
-					A("height", item.PosterHeight).
-					A("loading", "lazy").
-					A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).
-					N(),
+				render.N("div.imgs",
+					carrouselOne(item, "_icon/"+item.Host+"_"+item.ID+".jpg"),
+					render.S2(item.PosterAnnex, "", func(i int, _ []byte) render.Node {
+						return carrouselOne(item, fmt.Sprintf("_icon/%s_%s_%d.jpg", item.Host, item.ID, i))
+					}),
 				),
 				render.N("br"),
 				render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {

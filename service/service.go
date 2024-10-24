@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"frontend-gafam/service/common"
 	"frontend-gafam/service/front"
+	"frontend-gafam/service/instagram"
 	"frontend-gafam/service/peertube"
 	"frontend-gafam/service/twitch"
 	"frontend-gafam/service/youtube"
@@ -28,10 +29,8 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 	for _, u := range urls {
 		proto, id, _ := strings.Cut(u, ":")
 		switch proto {
-		case "yt.ch":
-			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
-		case "yt.pl":
-			index.Lists = append(index.Lists, youtube.PlaylistRSS(t, id))
+		case "insta.ch":
+			index.Lists = append(index.Lists, instagram.User(t, id))
 		case "peertube.a":
 			index.Lists = append(index.Lists, peertube.User(t, id))
 		case "peertube.c":
@@ -40,6 +39,10 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, twitch.Channel(t, id))
 		case "twitch.te":
 			index.Lists = append(index.Lists, twitch.Team(t, id)...)
+		case "yt.ch":
+			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
+		case "yt.pl":
+			index.Lists = append(index.Lists, youtube.PlaylistRSS(t, id))
 		default:
 			t.Warn("unknown.urlproto", "proto", proto, "id", id)
 			continue

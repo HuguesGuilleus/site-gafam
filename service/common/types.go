@@ -30,11 +30,12 @@ type Item struct {
 	Published   time.Time
 	Updated     time.Time
 	Duration    time.Duration
-	Like        uint
+	Like        int
 	View        uint
 
 	// For video
 	Poster       []byte
+	PosterAnnex  [][]byte
 	PosterWidth  string
 	PosterHeight string
 	Sources      []Source

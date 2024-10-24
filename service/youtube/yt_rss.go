@@ -38,7 +38,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 				V uint `xml:"views,attr"`
 			} `xml:"group>community>statistics"`
 			Like struct {
-				V uint `xml:"count,attr"`
+				V int `xml:"count,attr"`
 			} `xml:"group>community>starRating"`
 		} `xml:"entry"`
 	}{}
