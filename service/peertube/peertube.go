@@ -103,6 +103,7 @@ func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List 
 			Author:       dto.Channel.Title,
 			Published:    entry.Pub.Time,
 			View:         uint(view),
+			IsVideo:      true,
 			Poster:       poster,
 			PosterWidth:  width,
 			PosterHeight: height,

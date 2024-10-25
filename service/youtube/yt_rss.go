@@ -62,6 +62,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 			Updated:      entry.Updated,
 			Like:         entry.Like.V,
 			View:         entry.View.V,
+			IsVideo:      true,
 			Poster:       poster,
 			PosterWidth:  width,
 			PosterHeight: height,

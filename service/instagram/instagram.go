@@ -38,6 +38,7 @@ func User(t *tool.Tool, id string) *common.List {
 									}
 								}
 							}
+							Video_url               string
 							Taken_at_timestamp      int64
 							Edge_media_preview_like struct {
 								Count int
@@ -75,6 +76,14 @@ func User(t *tool.Tool, id string) *common.List {
 			}
 		}
 
+		sources := ([]common.Source)(nil)
+		if edge.Node.Video_url != "" {
+			sources = []common.Source{{
+				URL:    edge.Node.Video_url,
+				Height: node.Dimensions.Height,
+			}}
+		}
+
 		items[i] = &common.Item{
 			ID:          edge.Node.ID,
 			Host:        "instagram",
@@ -83,11 +92,13 @@ func User(t *tool.Tool, id string) *common.List {
 			Author:      owner,
 			Published:   time.Unix(node.Taken_at_timestamp, 0),
 			Like:        node.Edge_media_preview_like.Count,
+			IsVideo:     len(sources) != 0,
 
 			Poster:       poster,
 			PosterAnnex:  posterAnnex,
 			PosterWidth:  strconv.Itoa(node.Dimensions.Width),
 			PosterHeight: strconv.Itoa(node.Dimensions.Height),
+			Sources:      sources,
 		}
 	}
 

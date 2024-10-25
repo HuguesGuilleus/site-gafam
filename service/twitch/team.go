@@ -106,6 +106,7 @@ func Channel(t *tool.Tool, id string) *common.List {
 					Published:    video.PublishedAt,
 					Duration:     time.Duration(video.Duration) * time.Second,
 					View:         video.ViewCount,
+					IsVideo:      true,
 					Poster:       poster,
 					PosterWidth:  width,
 					PosterHeight: height,

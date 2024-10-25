@@ -32,6 +32,7 @@ type Item struct {
 	Duration    time.Duration
 	Like        int
 	View        uint
+	IsVideo     bool
 
 	// For video
 	Poster       []byte

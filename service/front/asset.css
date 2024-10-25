@@ -90,6 +90,17 @@ div.imgs {
 	}
 }
 
+.isVideo {
+	border: #000 .5ex dashed;
+	background: none;
+	border-style: dashed;
+	display: flex;
+
+	& img {
+		height: 12ex;
+	}
+}
+
 img {
 	display: block;
 	height: 13ex;

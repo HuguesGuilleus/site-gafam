@@ -115,6 +115,9 @@ func carousel(items []*common.Item) render.Node {
 		href := "../_" + item.Host + "_" + item.ID + ".html"
 		src0 := "../_icon/" + item.Host + "_" + item.ID + ".jpg"
 		if len(item.PosterAnnex) == 0 {
+			if item.IsVideo {
+				return render.Na("a.wi.isVideo", "href", href).N(carrouselOne(item, src0))
+			}
 			return render.Na("a.wi", "href", href).N(carrouselOne(item, src0))
 		}
 		return render.Na("a.wi.slides", "href", href).N(
