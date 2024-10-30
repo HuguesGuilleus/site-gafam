@@ -147,8 +147,7 @@ func RenderPlaylist(t *tool.Tool, id string) {
 		FetchVideoImage(t, video.Id)
 	}
 
-	t.WriteFile("/youtube/list/"+id+".html", render.Merge(render.No("html",
-		render.A("lang", "fr"),
+	t.WriteFile("/youtube/list/"+id+".html", render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head",
 			asset.Begin,
 			render.N("title", p.Title),
@@ -156,17 +155,17 @@ func RenderPlaylist(t *tool.Tool, id string) {
 		render.N("body",
 			render.N("header",
 				render.N("div.title", p.Title),
-				render.No("a.copy", render.A("href", "https://www.youtube.com/playlist?list="+id), p.Id),
+				render.Na("a.copy", "href", "https://www.youtube.com/playlist?list="+id).N(p.Id),
 				render.If(p.Description != "", func() render.Node {
 					return render.N("p", p.Description)
 				}),
 			),
-			render.N("ul.items", render.Slice(p.Items, func(_ int, video VideoItem) render.Node {
+			render.N("ul.items", render.S(p.Items, "", func(video VideoItem) render.Node {
 				return render.N("li.item",
-					render.No("img", render.A("src", "../icon/"+video.Id+".jpg")),
+					render.Na("img", "src", "../icon/"+video.Id+".jpg"),
 					render.N("div",
 						render.N("div",
-							render.No("a.copy", render.A("href", "https://youtu.be/"+video.Id), video.Id),
+							render.Na("a.copy", "href", "https://youtu.be/"+video.Id).N(video.Id),
 							" ", video.Title),
 						"@", video.Author.Tag, " (", video.Duration, ")",
 					),

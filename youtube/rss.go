@@ -120,37 +120,35 @@ func FetchRSS(t *tool.Tool, isChannel bool, id string) *Index {
 
 func RenderIndex(t *tool.Tool, base string, index *Index) {
 	saveRss2json(t, base, index)
-	t.WriteFile(base+index.OutID+".html", render.Merge(render.No("html",
-		render.A("lang", "fr"),
+	t.WriteFile(base+index.OutID+".html", render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head", asset.Begin, render.N("title", "Index")),
 		render.N("body",
 			render.N("header",
-				render.N("div.title", render.No("a", render.A("href", "index.html"), "<~"), " Index"),
+				render.N("div.title", render.Na("a", "href", "index.html").N("<~"), " Index"),
 				render.N("p", render.IfElse(index.IsChannel,
 					func() render.Node {
-						return render.No("a.copy", render.A("href", "https://youtube.com/channel/"+index.Id), index.Id)
+						return render.Na("a.copy", "href", "https://youtube.com/channel/"+index.Id).N(index.Id)
 					},
 					func() render.Node {
-						return render.No("a.copy", render.A("href", "https://www.youtube.com/playlist?list="+index.Id), index.Id)
+						return render.Na("a.copy", "href", "https://www.youtube.com/playlist?list="+index.Id).N(index.Id)
 					},
 				)),
 			),
 			render.N("main",
 				videosCarousel(index.Items),
-				render.N("ul.items", render.Slice(index.Items, func(_ int, video IndexVideoItem) render.Node {
+				render.N("ul.items", render.S(index.Items, "", func(video IndexVideoItem) render.Node {
 					return render.N("li.item",
-						render.No("img", render.A("src", "vi/"+video.Id+".jpg")),
+						render.Na("img", "src", "vi/"+video.Id+".jpg"),
 						render.N("div.title",
-							render.No("a.copy", render.A("href", "https://youtu.be/"+video.Id), video.Id),
+							render.Na("a.copy", "href", "https://youtu.be/"+video.Id).N(video.Id),
 							" ", video.Title),
-
 						render.N("div.meta",
 							"[ like: ", video.Like,
 							" | vue: ", video.View, " ] ",
 							video.AuthorName,
 							video.Published.In(time.Local).Format(" (2006-01-02 15:04:05)"),
 						),
-						render.Slice(video.Description, func(_ int, l string) render.Node {
+						render.S(video.Description, "", func(l string) render.Node {
 							if l == "" {
 								return render.N("div.emptyline")
 							}
@@ -158,8 +156,8 @@ func RenderIndex(t *tool.Tool, base string, index *Index) {
 						}),
 					)
 				}))),
-		)),
-	))
+		),
+	)))
 }
 
 func saveRss2json(t *tool.Tool, base string, index *Index) {

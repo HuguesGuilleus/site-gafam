@@ -55,32 +55,33 @@ func SaveVideoImage(t *tool.Tool, base, id string) {
 }
 
 func renderAll(t *tool.Tool, base string, news []IndexVideoItem, index []*Index) {
-	t.WriteFile(base+"index.html", render.Merge(render.No("html", render.A("lang", "fr"),
+	t.WriteFile(base+"index.html", render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head", asset.Begin, render.N("title", "Index")),
 		render.N("body",
 			render.N("header.c", render.N("div.title", "Index")),
 			render.N("main.and2toc",
 				render.N("ul.toc",
 					render.N("li", "(Total: ", len(index), ")"),
-					render.Slice(index, func(_ int, index *Index) render.Node {
-						return render.N("li", render.No("a", render.A("href", "#"+index.Id), index.Title))
+					render.S(index, "", func(index *Index) render.Node {
+						return render.N("li", render.Na("a", "href", "#"+index.Id).N(index.Title))
 					}),
 				),
 				render.N("div",
 					videosCarousel(news),
-					render.Slice(index, func(_ int, index *Index) render.Node {
+					render.S(index, "", func(index *Index) render.Node {
 						return render.N("",
-							render.No("h1", render.A("id", index.Id),
-								render.No("a.copy", render.A("href", "https://youtube.com/channel/"+index.Id), index.Id),
+							render.Na("h1", "id", index.Id).N(
+								render.Na("a.copy", "href", "https://youtube.com/channel/"+index.Id).N(index.Id),
 								" ", index.Title, " ",
-								render.No("a", render.A("href", index.OutID+".html"), "~>")),
+								render.Na("a", "href", index.OutID+".html").N("~>"),
+							),
 							videosCarousel(index.Items),
 						)
 					}),
 				),
 			),
-		)),
-	))
+		),
+	)))
 }
 
 func videosCarousel(videos []IndexVideoItem) render.Node {
@@ -96,7 +97,7 @@ func videosCarousel(videos []IndexVideoItem) render.Node {
 						" @"+video.AuthorName+
 						" ["+video.Published.Format("2006-01-02")+
 						"] vue: "+strconv.FormatUint(uint64(video.View), 10),
-				).N(),
+				),
 		)
 	}))
 }
