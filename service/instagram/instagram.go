@@ -1,10 +1,10 @@
 package instagram
 
 import (
-	"context"
 	"encoding/json"
 	"frontend-gafam/service/common"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 	"time"
 )
@@ -52,7 +52,7 @@ func User(t *tool.Tool, id string) *common.List {
 			}
 		}
 	}{}
-	j := tool.FetchAll(context.Background(), t, "", `https://www.instagram.com/graphql/query/?query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"`+id+`","first":"24"}`, nil, nil)
+	j := tool.FetchAll(t, fetch.R("", `https://www.instagram.com/graphql/query/?query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"`+id+`","first":"24"}`, nil))
 	if err := json.Unmarshal(j, &dto); err != nil {
 		t.Warn("insta.err", "id", id, "err", err.Error())
 		return nil
@@ -66,13 +66,13 @@ func User(t *tool.Tool, id string) *common.List {
 	}
 	for i, edge := range edges {
 		node := edge.Node
-		poster := tool.FetchAll(context.Background(), t, "", edge.Node.Display_url, nil, nil)
+		poster := tool.FetchAll(t, fetch.R("", edge.Node.Display_url, nil))
 
 		posterAnnex := ([][]byte)(nil)
 		if len(edge.Node.Edge_sidecar_to_children.Edges) > 1 {
 			posterAnnex = make([][]byte, len(edge.Node.Edge_sidecar_to_children.Edges)-1)
 			for i, annex := range edge.Node.Edge_sidecar_to_children.Edges[1:] {
-				posterAnnex[i] = tool.FetchAll(context.Background(), t, "", annex.Node.Display_url, nil, nil)
+				posterAnnex[i] = tool.FetchAll(t, fetch.R("", annex.Node.Display_url, nil))
 			}
 		}
 

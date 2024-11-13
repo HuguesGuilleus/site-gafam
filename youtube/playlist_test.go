@@ -14,8 +14,8 @@ import (
 var playlistHTML []byte
 
 func TestPlaylist(t *testing.T) {
-	_, to := tool.NewTestTool(fetch.TestFetcher{
-		"https://www.youtube.com/playlist?list=gta": playlistHTML,
+	_, to := tool.NewTestTool(map[string]*fetch.TestResponse{
+		"https://www.youtube.com/playlist?list=gta": fetch.TR(200, playlistHTML),
 	})
 	p := FetchPlaylist(to, "gta")
 	assert.NotNil(t, p)

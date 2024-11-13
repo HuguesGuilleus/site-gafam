@@ -2,10 +2,10 @@ package youtube
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"frontend-gafam/asset"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"sniffle/tool/render"
 	"strings"
 	"time"
@@ -19,7 +19,7 @@ type Playlist struct {
 }
 
 func FetchPlaylist(t *tool.Tool, id string) *Playlist {
-	body := tool.FetchAll(context.Background(), t, "", "https://www.youtube.com/playlist?list="+id, nil, nil)
+	body := tool.FetchAll(t, fetch.R("", "https://www.youtube.com/playlist?list="+id, nil))
 
 	_, src, ok := bytes.Cut(body, []byte("var ytInitialData = "))
 	if !ok {

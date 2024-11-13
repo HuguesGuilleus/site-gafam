@@ -2,10 +2,10 @@ package youtube
 
 import (
 	"cmp"
-	"context"
 	"frontend-gafam/asset"
 	"slices"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"sniffle/tool/render"
 	"strconv"
 	"strings"
@@ -51,7 +51,7 @@ func Do(t *tool.Tool, todo *Todo) {
 // Save in `/youtube/icon/{id}.jpg`
 func SaveVideoImage(t *tool.Tool, base, id string) {
 	t.WriteFile(base+"vi/"+id+".jpg",
-		tool.FetchAll(context.Background(), t, "", "https://img.youtube.com/vi/"+id+"/hqdefault.jpg", nil, nil))
+		tool.FetchAll(t, fetch.R("", "https://img.youtube.com/vi/"+id+"/hqdefault.jpg", nil)))
 }
 
 func renderAll(t *tool.Tool, base string, news []IndexVideoItem, index []*Index) {

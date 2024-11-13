@@ -1,10 +1,10 @@
 package peertube
 
 import (
-	"context"
 	"encoding/xml"
 	"frontend-gafam/service/common"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 	"time"
@@ -20,7 +20,7 @@ func User(t *tool.Tool, handle string) *common.List {
 	dto := struct {
 		ID int
 	}{}
-	if tool.FetchJSON(context.Background(), t, "", "https://"+host+"/api/v1/accounts/"+handle, nil, nil, &dto) {
+	if tool.FetchJSON(t, nil, &dto, fetch.R("", "https://"+host+"/api/v1/accounts/"+handle, nil)) {
 		return nil
 	}
 
@@ -38,7 +38,7 @@ func Channel(t *tool.Tool, handle string) *common.List {
 	dto := struct {
 		ID int
 	}{}
-	if tool.FetchJSON(context.Background(), t, "", "https://"+host+"/api/v1/video-channels/"+handle, nil, nil, &dto) {
+	if tool.FetchJSON(t, nil, &dto, fetch.R("", "https://"+host+"/api/v1/video-channels/"+handle, nil)) {
 		return nil
 	}
 
@@ -47,7 +47,7 @@ func Channel(t *tool.Tool, handle string) *common.List {
 }
 
 func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List {
-	x := tool.FetchAll(context.Background(), t, "", url, nil, nil)
+	x := tool.FetchAll(t, fetch.R("", url, nil))
 	dto := struct {
 		Channel struct {
 			Title       string `xml:"title"`

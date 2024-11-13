@@ -37,8 +37,8 @@ func main() {
 		HostURL:   "localhost",
 		Writefile: writefile.Os("public"),
 		Fetcher: []fetch.Fetcher{
-			fetch.CacheOnly("cache"),
-			fetch.Net(nil, "cache", 1, time.Millisecond*100),
+			fetch.Cache("cache"),
+			fetch.Net(nil, "cache", time.Millisecond*100*0),
 		},
 		LongTasksCache: writefile.Os("cache"),
 		LongTasksMap:   map[string]func([]byte) ([]byte, error){},

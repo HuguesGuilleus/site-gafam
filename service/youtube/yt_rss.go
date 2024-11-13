@@ -1,10 +1,10 @@
 package youtube
 
 import (
-	"context"
 	"encoding/xml"
 	"frontend-gafam/service/common"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"time"
 )
 
@@ -21,7 +21,7 @@ func PlaylistRSS(t *tool.Tool, id string) *common.List {
 }
 
 func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
-	data := tool.FetchAll(context.Background(), t, "", dataURL, nil, nil)
+	data := tool.FetchAll(t, fetch.R("", dataURL, nil))
 	dto := struct {
 		Title string `xml:"title"`
 		ID    string `xml:"channelId"`

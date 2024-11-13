@@ -1,11 +1,11 @@
 package tiktok
 
 import (
-	"context"
 	"encoding/json"
 	"frontend-gafam/service/common"
 	"slices"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 	"time"
@@ -13,7 +13,7 @@ import (
 
 func Channel(t *tool.Tool, id string) *common.List {
 	url := "https://www.tiktok.com/@" + id
-	html := string(tool.FetchAll(context.Background(), t, "", url, nil, nil))
+	html := string(tool.FetchAll(t, fetch.R("", url, nil)))
 
 	_, jsonAndEnd, ok := strings.Cut(html, `<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">`)
 	if !ok {
@@ -75,7 +75,9 @@ func fetchList(t *tool.Tool, url string) []*common.Item {
 			}
 		}
 	}{}
-	tool.FetchJSON(context.Background(), t, "", url, nil, nil, &dto)
+	if tool.FetchJSON(t, nil, &dto, fetch.R("", url, nil)) {
+		return nil
+	}
 
 	items := make([]*common.Item, 0, len(dto.ItemList))
 	for _, dto := range dto.ItemList {

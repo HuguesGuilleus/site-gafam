@@ -1,10 +1,10 @@
 package twitch
 
 import (
-	"context"
 	"frontend-gafam/service/common"
 	"net/http"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 	"time"
 )
@@ -49,11 +49,9 @@ func Channel(t *tool.Tool, id string) *common.List {
 	qID := strconv.Quote(id)
 	body := channelBodyBegin + qID + channelBodyMiddle + qID + channelBodyEnd
 	list := &common.List{
-		ID:  id,
-		URL: "https://www.twitch.tv/" + id,
-		JSON: tool.FetchAll(context.Background(), t, http.MethodPost, endpointURL,
-			http.Header{"Client-ID": []string{clientID}},
-			[]byte(body)),
+		ID:   id,
+		URL:  "https://www.twitch.tv/" + id,
+		JSON: tool.FetchAll(t, fetch.Rs(http.MethodPost, endpointURL, body, "Client-ID", clientID)),
 	}
 
 	dto := []struct {
@@ -78,9 +76,7 @@ func Channel(t *tool.Tool, id string) *common.List {
 			}
 		}
 	}{}
-	if tool.FetchJSON(context.Background(), t, http.MethodPost, endpointURL,
-		http.Header{"Client-ID": []string{clientID}},
-		[]byte(body), &dto) {
+	if tool.FetchJSON(t, nil, &dto, fetch.Rs(http.MethodPost, endpointURL, body, "Client-ID", clientID)) {
 		return nil
 	}
 

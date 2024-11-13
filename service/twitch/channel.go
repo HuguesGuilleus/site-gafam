@@ -1,10 +1,10 @@
 package twitch
 
 import (
-	"context"
 	"frontend-gafam/service/common"
 	"net/http"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 )
 
@@ -41,9 +41,7 @@ func Team(t *tool.Tool, id string) (list []*common.List) {
 			}
 		}
 	}{}
-	if tool.FetchJSON(context.Background(), t, http.MethodPost, endpointURL,
-		http.Header{"Client-ID": []string{clientID}},
-		[]byte(body), &dto) {
+	if tool.FetchJSON(t, nil, &dto, fetch.Rs(http.MethodPost, endpointURL, body, "Client-ID", clientID)) {
 		return nil
 	}
 

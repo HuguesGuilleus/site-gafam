@@ -1,12 +1,12 @@
 package youtube
 
 import (
-	"context"
 	"encoding/json"
 	"encoding/xml"
 	"frontend-gafam/asset"
 	"slices"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"sniffle/tool/render"
 	"strings"
 	"time"
@@ -46,7 +46,7 @@ func FetchRSS(t *tool.Tool, isChannel bool, id string) *Index {
 		url = "https://www.youtube.com/feeds/videos.xml?playlist_id=" + id
 	}
 
-	data := tool.FetchAll(context.Background(), t, "", url, nil, nil)
+	data := tool.FetchAll(t, fetch.R("", url, nil))
 	dto := struct {
 		Title      string    `xml:"title"`
 		ID         string    `xml:"channelId"`

@@ -2,17 +2,17 @@ package common
 
 import (
 	"bytes"
-	"context"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
 	"sniffle/tool"
+	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 )
 
 func FetchPoster(t *tool.Tool, url string) (data []byte, width, height string) {
-	data = tool.FetchAll(context.Background(), t, "", url, nil, nil)
+	data = tool.FetchAll(t, fetch.R("", url, nil))
 
 	config, _, _ := image.DecodeConfig(bytes.NewReader(data))
 	width = strconv.Itoa(config.Width)
