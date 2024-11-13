@@ -70,6 +70,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 	}
 
 	return &common.List{
+		Host:  "yt",
 		ID:    dto.ID,
 		URL:   humanURL,
 		Title: dto.Title,

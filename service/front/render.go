@@ -48,7 +48,7 @@ func renderIndex(t *tool.Tool, base string, index *common.Index) {
 				render.N("ul.toc",
 					render.N("li", "(Total: ", len(index.Lists), ")"),
 					render.S(index.Lists, "", func(list *common.List) render.Node {
-						return render.N("li", render.Na("a", "href", "#"+list.ID).N(list.Title))
+						return render.N("li", render.Na("a", "href", "#"+list.ID).N(list.Title, " [", list.Host, "]"))
 					}),
 				),
 				render.N("div",
@@ -56,7 +56,7 @@ func renderIndex(t *tool.Tool, base string, index *common.Index) {
 					render.S(index.Lists, "", func(list *common.List) render.Node {
 						return render.N("",
 							render.Na("h1", "id", list.ID).N(
-								render.Na("a.copy", "href", list.URL).N(list.ID),
+								render.Na("a.copy", "href", list.URL).N(list.ID, " [", list.Host, "]"),
 								" ", list.Title, " ",
 								render.Na("a", "href", list.ID+".html").N("~>"),
 							),

@@ -49,6 +49,7 @@ func Channel(t *tool.Tool, id string) *common.List {
 	qID := strconv.Quote(id)
 	body := channelBodyBegin + qID + channelBodyMiddle + qID + channelBodyEnd
 	list := &common.List{
+		Host: "twitch",
 		ID:   id,
 		URL:  "https://www.twitch.tv/" + id,
 		JSON: tool.FetchAll(t, fetch.Rs(http.MethodPost, endpointURL, body, "Client-ID", clientID)),

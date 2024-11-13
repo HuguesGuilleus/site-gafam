@@ -52,6 +52,7 @@ func Channel(t *tool.Tool, id string) *common.List {
 		return b.Published.Compare(a.Published)
 	})
 	return &common.List{
+		Host:        "tiktok",
 		ID:          id,
 		URL:         url,
 		Title:       user.Nickname,

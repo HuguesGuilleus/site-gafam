@@ -103,6 +103,7 @@ func User(t *tool.Tool, id string) *common.List {
 	}
 
 	return &common.List{
+		Host:  "insta",
 		ID:    id,
 		Title: owner,
 		URL:   "https://www.instagram.com/" + owner + "/",

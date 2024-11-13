@@ -112,6 +112,7 @@ func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List 
 	}
 
 	return &common.List{
+		Host:        "peertube",
 		ID:          handle,
 		URL:         "https://" + host + "/c/" + handleName + "/videos",
 		Title:       dto.Channel.Title,

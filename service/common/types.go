@@ -10,6 +10,7 @@ type Index struct {
 
 // A playlist, author channel...
 type List struct {
+	Host        string
 	ID          string
 	URL         string
 	Title       string
