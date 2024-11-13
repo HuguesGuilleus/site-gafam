@@ -4,33 +4,43 @@ import (
 	"context"
 	"flag"
 	"frontend-gafam/service"
-	"frontend-gafam/youtube"
 	"log/slog"
 	"os"
 	"sniffle/myhandler"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"sniffle/tool/writefile"
+	"strings"
 	"time"
 
 	"github.com/BurntSushi/toml"
 )
 
-var ytTodo = youtube.Todo{}
-
 func main() {
-	// Clear cache
-	cc := flag.Bool("cc", false, "Clear the cache")
 	flag.Parse()
-	if *cc {
-		entrys, _ := os.ReadDir("cache/https/")
-		for _, entry := range entrys {
-			if entry.Name() == "img.youtube.com" {
-				continue
-			}
-			os.RemoveAll("cache/https/" + entry.Name())
+
+	fetch.ClearCache("cache", func(m *fetch.Meta) time.Duration {
+		u := m.URL
+		switch {
+		// Instagram
+		case u.Scheme == "https" && strings.HasSuffix(u.Host, ".cdninstagram.com"):
+			return time.Hour * 24 * 30
+		// Peertube
+		case u.Scheme == "https" && strings.HasPrefix(u.Path, "/lazy-static/thumbnails/") && strings.HasSuffix(u.Path, ".jpg"):
+			return time.Hour * 24 * 30
+		// Tiktok
+		case u.Scheme == "https" && strings.HasSuffix(u.Host, ".tiktokcdn.com"):
+			return time.Hour * 24 * 30
+		// Youtube
+		case u.Scheme == "https" && u.Host == "img.youtube.com":
+			return time.Hour * 24 * 30
+		// Twitch
+		case u.Scheme == "https" && u.Host == "static-cdn.jtvnw.net" && strings.HasSuffix(u.Path, ".jpg"):
+			return time.Hour * 24 * 30
+		default:
+			return time.Hour * 2
 		}
-	}
+	})
 
 	t := tool.New(&tool.Config{
 		Logger:    slog.New(myhandler.New(os.Stderr, slog.LevelInfo)),
