@@ -1,15 +1,81 @@
 package instagram
 
 import (
-	"encoding/json"
+	"bytes"
 	"frontend-gafam/service/common"
+	"net/url"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"strconv"
 	"time"
 )
 
-func User(t *tool.Tool, id string) *common.List {
+func User(t *tool.Tool, id string) (list *common.List) {
+	list = fetchChannel(t, id)
+	if list == nil {
+		return nil
+	}
+
+	request := fetch.Request{URL: &url.URL{
+		Scheme:   "https",
+		Host:     "www.instagram.com",
+		Path:     "/graphql/query",
+		RawQuery: `query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"` + id + `","first":"24"}`,
+	}}
+
+	list.JSON = bytes.Join([][]byte{
+		[]byte("["),
+		list.JSON,
+		[]byte(","),
+		tool.FetchAll(t, &request),
+		[]byte("]"),
+	}, nil)
+
+	list.Items = trItems(t, &request)
+
+	return list
+}
+
+func fetchChannel(t *tool.Tool, id string) *common.List {
+	request := fetch.Request{URL: &url.URL{
+		Scheme:   "https",
+		Host:     "www.instagram.com",
+		Path:     "/graphql/query",
+		RawQuery: `doc_id=9539110062771438&variables={"id":"` + id + `","render_surface":"PROFILE"}`,
+	}}
+
+	dto := struct {
+		Data struct {
+			User struct {
+				Username     string
+				Full_name    string
+				External_url string
+				Biography    string
+			}
+		}
+	}{}
+	if tool.FetchJSON(t, nil, &dto, &request) {
+		return nil
+	}
+	user := dto.Data.User
+
+	description := common.Description(user.Biography)
+	if user.External_url != "" {
+		description = append(description, user.External_url)
+	}
+	description = append(description, "raw ID: "+id)
+
+	return &common.List{
+		Host:        "insta",
+		ID:          user.Username,
+		URL:         "https://www.instagram.com/" + user.Username + "/",
+		Title:       user.Full_name,
+		Description: description,
+		JSON:        tool.FetchAll(t, &request),
+	}
+}
+
+func trItems(t *tool.Tool, request *fetch.Request) []*common.Item {
 	dto := struct {
 		Status string
 		Data   struct {
@@ -52,18 +118,12 @@ func User(t *tool.Tool, id string) *common.List {
 			}
 		}
 	}{}
-	j := tool.FetchAll(t, fetch.R("", `https://www.instagram.com/graphql/query/?query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"`+id+`","first":"24"}`, nil))
-	if err := json.Unmarshal(j, &dto); err != nil {
-		t.Warn("insta.err", "id", id, "err", err.Error())
+	if tool.FetchJSON(t, nil, &dto, request) {
 		return nil
 	}
 
 	edges := dto.Data.User.Edge_owner_to_timeline_media.Edges
 	items := make([]*common.Item, len(edges))
-	owner := id
-	if len(edges) != 0 {
-		owner = edges[0].Node.Owner.Username
-	}
 	for i, edge := range edges {
 		node := edge.Node
 		poster := tool.FetchAll(t, fetch.R("", edge.Node.Display_url, nil))
@@ -84,6 +144,7 @@ func User(t *tool.Tool, id string) *common.List {
 			}}
 		}
 
+		owner := node.Owner.Username
 		items[i] = &common.Item{
 			ID:          edge.Node.ID,
 			Host:        "instagram",
@@ -101,13 +162,5 @@ func User(t *tool.Tool, id string) *common.List {
 			Sources:      sources,
 		}
 	}
-
-	return &common.List{
-		Host:  "insta",
-		ID:    id,
-		Title: owner,
-		URL:   "https://www.instagram.com/" + owner + "/",
-		Items: items,
-		JSON:  j,
-	}
+	return items
 }
