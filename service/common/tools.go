@@ -11,10 +11,10 @@ import (
 	"strings"
 )
 
-func FetchPoster(t *tool.Tool, url string) (data []byte, width, height string) {
-	data = tool.FetchAll(t, fetch.R("", url, nil))
+func FetchPoster(t *tool.Tool, url string) (poster []byte, width, height string) {
+	poster = tool.FetchAll(t, fetch.URL(url))
 
-	config, _, _ := image.DecodeConfig(bytes.NewReader(data))
+	config, _, _ := image.DecodeConfig(bytes.NewReader(poster))
 	width = strconv.Itoa(config.Width)
 	height = strconv.Itoa(config.Height)
 

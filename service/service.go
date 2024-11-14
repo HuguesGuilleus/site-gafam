@@ -5,6 +5,7 @@ import (
 	"frontend-gafam/service/common"
 	"frontend-gafam/service/front"
 	"frontend-gafam/service/instagram"
+	"frontend-gafam/service/lfi"
 	"frontend-gafam/service/peertube"
 	"frontend-gafam/service/tiktok"
 	"frontend-gafam/service/twitch"
@@ -32,6 +33,8 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 		switch proto {
 		case "insta.ch":
 			index.Lists = append(index.Lists, instagram.User(t, id))
+		case "lfi.g":
+			index.Lists = append(index.Lists, lfi.Group(t, id))
 		case "peertube.a":
 			index.Lists = append(index.Lists, peertube.User(t, id))
 		case "peertube.c":

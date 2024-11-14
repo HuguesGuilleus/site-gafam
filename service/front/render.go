@@ -3,6 +3,8 @@ package front
 import (
 	"fmt"
 	"frontend-gafam/service/common"
+	"maps"
+	"slices"
 	"sniffle/tool"
 	"sniffle/tool/render"
 	"strings"
@@ -111,15 +113,29 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 }
 
 func carouselLatest(items []*common.Item) []render.Node {
+	const future = "Future"
 	m := make(map[string][]*common.Item)
+	now := time.Now()
 	for _, item := range items {
-		date := item.Published.Local().Format(time.DateOnly)
+		date := future
+		if item.Published.Before(now) {
+			date = item.Published.Local().Format(time.DateOnly)
+		}
 		m[date] = append(m[date], item)
 	}
-	return render.Map(m, func(date string, items []*common.Item) render.Node {
+	if len(m[future]) > 0 {
+		m[future] = slices.CompactFunc(m[future], func(a, b *common.Item) bool {
+			return a.URL == b.URL
+		})
+	}
+
+	keys := slices.Collect(maps.Keys(m))
+	slices.Sort(keys)
+	slices.Reverse(keys)
+	return render.S(keys, "", func(date string) render.Node {
 		return render.N("",
 			render.N("h2", date),
-			carousel(items),
+			carousel(m[date]),
 		)
 	})
 }
