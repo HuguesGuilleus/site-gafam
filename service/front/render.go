@@ -52,7 +52,7 @@ func renderIndex(t *tool.Tool, base string, index *common.Index) {
 					}),
 				),
 				render.N("div",
-					carousel(index.News),
+					carouselLatest(index.News),
 					render.S(index.Lists, "", func(list *common.List) render.Node {
 						return render.N("",
 							render.Na("h1", "id", list.ID).N(
@@ -110,6 +110,19 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 	)))
 }
 
+func carouselLatest(items []*common.Item) []render.Node {
+	m := make(map[string][]*common.Item)
+	for _, item := range items {
+		date := item.Published.Local().Format(time.DateOnly)
+		m[date] = append(m[date], item)
+	}
+	return render.Map(m, func(date string, items []*common.Item) render.Node {
+		return render.N("",
+			render.N("h2", date),
+			carousel(items),
+		)
+	})
+}
 func carousel(items []*common.Item) render.Node {
 	return render.N("div.imgs", render.S(items, "", func(item *common.Item) render.Node {
 		href := "../_" + item.Host + "_" + item.ID + ".html"
