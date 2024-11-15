@@ -32,7 +32,7 @@ func main() {
 		case u.Scheme == "https" && strings.HasSuffix(u.Host, ".tiktokcdn.com"):
 			return time.Hour * 24 * 30
 		// Youtube
-		case u.Scheme == "https" && u.Host == "img.youtube.com":
+		case u.Scheme == "https" && (u.Host == "img.youtube.com" || u.Host == "lh3.googleusercontent.com"):
 			return time.Hour * 24 * 30
 		// Twitch
 		case u.Scheme == "https" && u.Host == "static-cdn.jtvnw.net" && strings.HasSuffix(u.Path, ".jpg"):

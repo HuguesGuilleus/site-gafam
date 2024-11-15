@@ -49,8 +49,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 
 	items := make([]*common.Item, len(dto.Entry))
 	for i, entry := range dto.Entry {
-		poster, width, height := common.FetchPoster(t,
-			"https://img.youtube.com/vi/"+entry.ID+"/hqdefault.jpg")
+		poster, width, height := fetchPoster(t, entry.ID)
 		items[i] = &common.Item{
 			Host:         "youtube",
 			ID:           entry.ID,
@@ -77,4 +76,8 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 		Items: items,
 		JSON:  common.Xml2Json(data),
 	}
+}
+
+func fetchPoster(t *tool.Tool, id string) (poster []byte, width, height string) {
+	return common.FetchPoster(t, "https://img.youtube.com/vi/"+id+"/hqdefault.jpg")
 }

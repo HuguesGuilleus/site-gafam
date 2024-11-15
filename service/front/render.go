@@ -98,7 +98,9 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 							render.IfS(item.Duration != 0, render.N("", " | ", item.Duration)),
 							" ] @",
 							item.Author,
-							item.Published.In(time.Local).Format(" (2006-01-02 15:04:05)"),
+							" (",
+							item.Published,
+							")",
 						),
 						render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {
 							return render.Na("a.copy", "href", s.URL).
@@ -162,7 +164,7 @@ func carrouselOne(item *common.Item, src string) render.Node {
 		A("width", item.PosterWidth).
 		A("height", item.PosterHeight).
 		A("loading", "lazy").
-		A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format("2006-01-02"), item.View)).N()
+		A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format(time.DateOnly), item.View)).N()
 }
 
 func renderOne(t *tool.Tool, item *common.Item) {
@@ -177,7 +179,9 @@ func renderOne(t *tool.Tool, item *common.Item) {
 					render.IfS(item.Duration != 0, render.N("", " | ", item.Duration)),
 					" ] @",
 					item.Author,
-					item.Published.In(time.Local).Format(" (2006-01-02 15:04:05)"),
+					" (",
+					item.Published,
+					")",
 				),
 			),
 			render.N("main",

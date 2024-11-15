@@ -45,6 +45,8 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, twitch.Channel(t, id))
 		case "twitch.te":
 			index.Lists = append(index.Lists, twitch.Team(t, id)...)
+		case "yt.charts.titles":
+			index.Lists = append(index.Lists, youtube.ChartsTitles(t, id))
 		case "yt.ch":
 			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
 		case "yt.pl":
