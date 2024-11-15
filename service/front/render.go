@@ -72,6 +72,11 @@ func renderIndex(t *tool.Tool, base string, index *common.Index) {
 }
 
 func renderChannel(t *tool.Tool, base string, list *common.List) {
+	mainTag := "main"
+	if len(list.Items) > 20 {
+		mainTag = "main.large"
+	}
+
 	t.WriteFile(base+"/"+list.ID+".html", render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head", begin, render.N("title", list.Title)),
 		render.N("body",
@@ -80,7 +85,7 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 				render.N("p", render.Na("a.copy", "href", list.URL).N(list.ID)),
 				renderDescription(list.Description),
 			),
-			render.N("main",
+			render.N(mainTag,
 				carousel(list.Items),
 				render.N("ul.items", render.S(list.Items, "", func(item *common.Item) render.Node {
 					return render.N("li.item",

@@ -37,6 +37,15 @@ main {
 		}
 	}
 
+	&.large {
+		max-width: unset;
+
+		& ul.items {
+			max-width: 100ex;
+			margin: 3ex auto;
+		}
+	}
+
 	h2 {
 		margin-bottom: 0;
 	}
