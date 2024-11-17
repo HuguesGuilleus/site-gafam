@@ -103,10 +103,8 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 							render.IfS(item.Duration != 0, render.N("", " | ", item.Duration)),
 							" ] @",
 							item.Author,
-							" (",
-							item.Published,
-							")",
 						),
+						render.N("div.meta", item.Published),
 						render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {
 							return render.Na("a.copy", "href", s.URL).
 								N(render.Int(s.Height), "p")
@@ -207,11 +205,13 @@ func renderOne(t *tool.Tool, item *common.Item) {
 	)))
 }
 
-func renderDescription(description []string) []render.Node {
-	return render.S(description, "", func(line string) render.Node {
-		if line == "" {
-			return render.N("div.emptyline")
-		}
-		return render.N("p", line)
-	})
+func renderDescription(description []string) render.Node {
+	return render.N("",
+		render.N("hr"),
+		render.S(description, "", func(line string) render.Node {
+			if line == "" {
+				return render.N("div.emptyline")
+			}
+			return render.N("p", line)
+		}))
 }

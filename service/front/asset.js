@@ -1,5 +1,12 @@
 onload = () => {
-	const qsaFor = (id, f) => document.querySelectorAll(id).forEach(f);
+	const INNERTEXT = "innerText",
+		qsaFor = (id, f) => document.querySelectorAll(id).forEach(f),
+		DateTimeFormat = (opt) =>
+			new Intl.DateTimeFormat(document.documentElement.lang, {
+				dateStyle: "full",
+				...opt,
+			});
+
 	qsaFor(".copy", (a) =>
 		a.onclick = (event) =>
 			event.preventDefault() |
@@ -13,5 +20,14 @@ onload = () => {
 				event.ctrlKey
 					? event.preventDefault() | window.open(img.src)
 					: 0,
+	);
+
+	qsaFor(
+		"time",
+		(time) =>
+			time[INNERTEXT] = (/T/.test(time.dateTime)
+				? DateTimeFormat({ timeStyle: "long" })
+				: DateTimeFormat({}))
+				.format(new Date(time.dateTime)),
 	);
 };
