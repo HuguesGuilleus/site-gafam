@@ -13,7 +13,7 @@ func Group(t *tool.Tool, id string) *common.List {
 	if list == nil {
 		return nil
 	}
-	list.Items = groupFuture(t, id)
+	list.Items = groupFuture(t, id, list.Title)
 
 	list.JSON = bytes.Join([][]byte{
 		{'['},
@@ -47,7 +47,7 @@ func groupInfoRequest(id string) *fetch.Request {
 	return fetch.URL("https://actionpopulaire.fr/api/groupes/" + id + "/")
 }
 
-func groupFuture(t *tool.Tool, id string) []*common.Item {
+func groupFuture(t *tool.Tool, id, author string) []*common.Item {
 	dto := []struct {
 		ID           string
 		Name         string
@@ -68,6 +68,7 @@ func groupFuture(t *tool.Tool, id string) []*common.Item {
 			ID:           event.ID,
 			URL:          "https://actionpopulaire.fr/evenements/" + event.ID + "/",
 			Title:        event.Name,
+			Author:       author,
 			Published:    event.StartTime,
 			Poster:       poster,
 			PosterWidth:  width,

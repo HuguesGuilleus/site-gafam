@@ -70,7 +70,10 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			}
 		}
 	}
-	slices.SortFunc(index.News, func(a, b *common.Item) int { return b.Published.Compare(a.Published) })
+	slices.SortFunc(index.News, func(a, b *common.Item) int { return a.Published.Compare(b.Published) })
+	index.News = slices.CompactFunc(index.News, func(a, b *common.Item) bool {
+		return a.URL == b.URL
+	})
 
 	return
 }

@@ -167,7 +167,7 @@ func carrouselOne(item *common.Item, src string) render.Node {
 		A("width", item.PosterWidth).
 		A("height", item.PosterHeight).
 		A("loading", "lazy").
-		A("title", fmt.Sprintf("%s @%s [%s] vue: %d", item.Title, item.Author, item.Published.Format(time.DateOnly), item.View)).N()
+		A("title", fmt.Sprintf("%s @%s@%s | %s", item.Title, item.Author, item.Host, item.Published.Format(time.DateOnly))).N()
 }
 
 func renderOne(t *tool.Tool, item *common.Item) {
@@ -182,6 +182,7 @@ func renderOne(t *tool.Tool, item *common.Item) {
 					render.IfS(item.Duration != 0, render.N("", " | ", item.Duration)),
 					" ] @",
 					item.Author,
+					"@", item.Host,
 					" (",
 					item.Published,
 					")",
