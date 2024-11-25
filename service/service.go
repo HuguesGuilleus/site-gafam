@@ -2,6 +2,8 @@ package service
 
 import (
 	"cmp"
+	"context"
+	"frontend-gafam/service/arte"
 	"frontend-gafam/service/common"
 	"frontend-gafam/service/front"
 	"frontend-gafam/service/instagram"
@@ -10,6 +12,7 @@ import (
 	"frontend-gafam/service/tiktok"
 	"frontend-gafam/service/twitch"
 	"frontend-gafam/service/youtube"
+	"log/slog"
 	"slices"
 	"sniffle/tool"
 	"strings"
@@ -29,8 +32,15 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 	index.Lists = make([]*common.List, 0, len(urls))
 
 	for _, u := range urls {
+		t.Log(context.Background(), slog.LevelInfo+2, "target", "u", u)
 		proto, id, _ := strings.Cut(u, ":")
 		switch proto {
+		case "arte.cat":
+			index.Lists = append(index.Lists, arte.Category(t, id)...)
+		case "arte.ch":
+			index.Lists = append(index.Lists, arte.Channel(t, id))
+		case "arte.li":
+			index.Lists = append(index.Lists, arte.List(t, id)...)
 		case "insta.ch":
 			index.Lists = append(index.Lists, instagram.User(t, id))
 		case "lfi.g":

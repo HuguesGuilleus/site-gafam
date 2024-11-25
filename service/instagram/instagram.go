@@ -2,6 +2,7 @@ package instagram
 
 import (
 	"bytes"
+	"fmt"
 	"frontend-gafam/service/common"
 	"net/url"
 	"sniffle/tool"
@@ -139,8 +140,8 @@ func trItems(t *tool.Tool, request *fetch.Request) []*common.Item {
 		sources := ([]common.Source)(nil)
 		if edge.Node.Video_url != "" {
 			sources = []common.Source{{
-				URL:    edge.Node.Video_url,
-				Height: node.Dimensions.Height,
+				URL:  edge.Node.Video_url,
+				Name: fmt.Sprintf("%dp", node.Dimensions.Height),
 			}}
 		}
 

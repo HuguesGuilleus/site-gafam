@@ -2,6 +2,7 @@ package peertube
 
 import (
 	"encoding/xml"
+	"fmt"
 	"frontend-gafam/service/common"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
@@ -91,7 +92,10 @@ func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List 
 
 		sources := make([]common.Source, 0)
 		for _, s := range entry.Sources.Content {
-			sources = append(sources, common.Source{URL: s.URL, Height: s.Height})
+			sources = append(sources, common.Source{
+				Name: fmt.Sprintf("%dp", s.Height),
+				URL:  s.URL,
+			})
 		}
 
 		items = append(items, &common.Item{

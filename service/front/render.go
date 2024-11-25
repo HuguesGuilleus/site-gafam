@@ -106,8 +106,7 @@ func renderChannel(t *tool.Tool, base string, list *common.List) {
 						),
 						render.N("div.meta", item.Published),
 						render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {
-							return render.Na("a.copy", "href", s.URL).
-								N(render.Int(s.Height), "p")
+							return render.Na("a.copy", "href", s.URL).N(s.Name)
 						})),
 						renderDescription(item.Description),
 					)
@@ -197,8 +196,7 @@ func renderOne(t *tool.Tool, item *common.Item) {
 				),
 				render.N("br"),
 				render.N("div", render.S(item.Sources, " ", func(s common.Source) render.Node {
-					return render.Na("a.copy", "href", s.URL).
-						N(render.Int(s.Height), "p")
+					return render.Na("a.copy", "href", s.URL).N(s.Name)
 				})),
 				renderDescription(item.Description),
 			),

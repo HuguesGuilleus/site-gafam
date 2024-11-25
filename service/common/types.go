@@ -44,6 +44,6 @@ type Item struct {
 }
 
 type Source struct {
-	URL    string
-	Height int
+	Name string
+	URL  string
 }
