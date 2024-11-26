@@ -65,6 +65,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 			Poster:       poster,
 			PosterWidth:  width,
 			PosterHeight: height,
+			Sources:      genSources(entry.ID),
 		}
 	}
 
@@ -80,4 +81,11 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 
 func fetchPoster(t *tool.Tool, id string) (poster []byte, width, height string) {
 	return common.FetchPoster(t, "https://img.youtube.com/vi/"+id+"/hqdefault.jpg")
+}
+
+func genSources(id string) []common.Source {
+	return []common.Source{
+		{Name: "9xbuddy", URL: "http://9xbuddy.com/download?url=http://www.youtube.com/watch?v=" + id},
+		{Name: "SaveFrom", URL: "http://en.savefrom.net/#url=http://www.youtube.com/watch?v=" + id},
+	}
 }

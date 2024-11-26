@@ -78,6 +78,8 @@ func ChartsTitles(t *tool.Tool, country string) *common.List {
 			Poster:       poster,
 			PosterWidth:  width,
 			PosterHeight: height,
+
+			Sources: genSources(id),
 		}
 	}
 
