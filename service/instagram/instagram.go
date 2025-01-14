@@ -4,47 +4,35 @@ import (
 	"bytes"
 	"fmt"
 	"frontend-gafam/service/common"
-	"net/url"
 	"sniffle/tool"
 	"sniffle/tool/fetch"
 	"strconv"
 	"time"
 )
 
+// Get last post of a instagram account.
 func User(t *tool.Tool, id string) (list *common.List) {
 	list = fetchChannel(t, id)
 	if list == nil {
 		return nil
 	}
 
-	request := fetch.Request{URL: &url.URL{
-		Scheme:   "https",
-		Host:     "www.instagram.com",
-		Path:     "/graphql/query",
-		RawQuery: `query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"` + id + `","first":"24"}`,
-	}}
+	list.Items = fetchItems(t, id)
+	common.SortByDate(list.Items)
 
 	list.JSON = bytes.Join([][]byte{
-		[]byte("["),
-		list.JSON,
-		[]byte(","),
-		tool.FetchAll(t, &request),
-		[]byte("]"),
+		[]byte(`{"channel":`),
+		tool.FetchAll(t, fetchChannelRequest(id)),
+		[]byte(`,"instaItems":`),
+		tool.FetchAll(t, fetchItemsRequest(id)),
+		[]byte(`}`),
 	}, nil)
-
-	list.Items = trItems(t, &request)
 
 	return list
 }
 
+// Fetch instagram account detail.
 func fetchChannel(t *tool.Tool, id string) *common.List {
-	request := fetch.Request{URL: &url.URL{
-		Scheme:   "https",
-		Host:     "www.instagram.com",
-		Path:     "/graphql/query",
-		RawQuery: `doc_id=9539110062771438&variables={"id":"` + id + `","render_surface":"PROFILE"}`,
-	}}
-
 	dto := struct {
 		Data struct {
 			User struct {
@@ -55,7 +43,7 @@ func fetchChannel(t *tool.Tool, id string) *common.List {
 			}
 		}
 	}{}
-	if tool.FetchJSON(t, nil, &dto, &request) {
+	if tool.FetchJSON(t, nil, &dto, fetchChannelRequest(id)) {
 		return nil
 	}
 	user := dto.Data.User
@@ -72,11 +60,14 @@ func fetchChannel(t *tool.Tool, id string) *common.List {
 		URL:         "https://www.instagram.com/" + user.Username + "/",
 		Title:       user.Full_name,
 		Description: description,
-		JSON:        tool.FetchAll(t, &request),
 	}
 }
+func fetchChannelRequest(id string) *fetch.Request {
+	return fetch.URL(`https://www.instagram.com/graphql/query?doc_id=9539110062771438&variables={"id":"` + id + `","render_surface":"PROFILE"}`)
+}
 
-func trItems(t *tool.Tool, request *fetch.Request) []*common.Item {
+// Fetch channel last items.
+func fetchItems(t *tool.Tool, id string) []*common.Item {
 	dto := struct {
 		Status string
 		Data   struct {
@@ -119,7 +110,7 @@ func trItems(t *tool.Tool, request *fetch.Request) []*common.Item {
 			}
 		}
 	}{}
-	if tool.FetchJSON(t, nil, &dto, request) {
+	if tool.FetchJSON(t, nil, &dto, fetchItemsRequest(id)) {
 		return nil
 	}
 
@@ -163,5 +154,9 @@ func trItems(t *tool.Tool, request *fetch.Request) []*common.Item {
 			Sources:      sources,
 		}
 	}
+
 	return items
+}
+func fetchItemsRequest(id string) *fetch.Request {
+	return fetch.URL(`https://www.instagram.com/graphql/query?query_hash=56a7068fea504063273cc2120ffd54f3&variables={"id":"` + id + `","first":"24"}`)
 }

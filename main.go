@@ -20,35 +20,54 @@ func main() {
 	flag.Parse()
 
 	fetch.ClearCache("cache", func(m *fetch.Meta) time.Duration {
-		u := m.URL
-		switch {
-		// Instagram
-		case u.Scheme == "https" && strings.HasSuffix(u.Host, ".cdninstagram.com"):
-			return time.Hour * 24 * 30
-		// Peertube
-		case u.Scheme == "https" && strings.HasPrefix(u.Path, "/lazy-static/thumbnails/") && strings.HasSuffix(u.Path, ".jpg"):
-			return time.Hour * 24 * 30
-		// Tiktok
-		case u.Scheme == "https" && strings.HasSuffix(u.Host, ".tiktokcdn.com"):
-			return time.Hour * 24 * 30
-		// Youtube
-		case u.Scheme == "https" && (u.Host == "img.youtube.com" || u.Host == "lh3.googleusercontent.com"):
-			return time.Hour * 24 * 30
-		// Twitch
-		case u.Scheme == "https" && u.Host == "static-cdn.jtvnw.net" && strings.HasSuffix(u.Path, ".jpg"):
-			return time.Hour * 24 * 30
-		default:
-			return time.Hour * 2
+		duration := map[string]time.Duration{
+			"api-cdn.arte.tv":           time.Hour * 24 * 365,
+			"api.arte.tv":               time.Hour * 24 * 30,
+			"www.instagram.com":         time.Hour * 24,
+			"www.tiktok.com":            time.Hour * 24,
+			"img.youtube.com":           time.Hour * 24 * 30,
+			"lh3.googleusercontent.com": time.Hour * 24 * 30,
+			"static-cdn.jtvnw.net":      time.Hour * 24 * 30,
+		}[m.URL.Host]
+		if duration > 0 {
+			return duration
 		}
+
+		switch {
+		case strings.HasSuffix(m.URL.Host, ".akamaized.net"): // Arte
+			return time.Hour * 24 * 365
+		case strings.HasSuffix(m.URL.Host, ".cdninstagram.com"): // Instagram
+			return time.Hour * 24 * 30
+		case strings.HasPrefix(m.URL.Path, "/lazy-static/thumbnails/") && strings.HasSuffix(m.URL.Path, ".jpg"): // Peertube
+			return time.Hour * 24 * 60
+		case strings.HasSuffix(m.URL.Host, ".tiktokcdn.com"): // Tiktok
+			return time.Hour * 24 * 30
+		}
+
+		return time.Hour * 2
 	})
 
 	t := tool.New(&tool.Config{
 		Logger:    slog.New(myhandler.New(os.Stderr, slog.LevelInfo)),
-		HostURL:   "localhost",
 		Writefile: writefile.Os("public"),
 		Fetcher: []fetch.Fetcher{
 			fetch.Cache("cache"),
-			fetch.Net(nil, "cache", time.Millisecond*100*0),
+			fetch.Net(nil, "cache", map[string]time.Duration{
+				"":                   time.Second / 2,
+				"actionpopulaire.fr": 0,
+				"api-cdn.arte.tv":    time.Second * 3,
+				"api.arte.tv":        time.Second * 30,
+				"www.instagram.com":  time.Second * 2,
+				"www.youtube.com":    time.Second / 100 * 0,
+
+				"arte-uhd-cmafhls.akamaized.net":   0 * time.Second / 20,
+				"img.youtube.com":                  0 * time.Second / 20,
+				"p16-sign-useast2a.tiktokcdn.com":  0 * time.Second / 20,
+				"scontent-cdg4-1.cdninstagram.com": 0 * time.Second / 20,
+				"scontent-cdg4-2.cdninstagram.com": 0 * time.Second / 20,
+				"scontent-cdg4-3.cdninstagram.com": 0 * time.Second / 20,
+				"scontent-cdg4-4.cdninstagram.com": 0 * time.Second / 20,
+			}),
 		},
 		LongTasksCache: writefile.Os("cache"),
 		LongTasksMap:   map[string]func([]byte) ([]byte, error){},

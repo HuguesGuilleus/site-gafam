@@ -43,6 +43,8 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, arte.List(t, id)...)
 		case "insta.ch":
 			index.Lists = append(index.Lists, instagram.User(t, id))
+		case "insta.tr+ch":
+			index.Lists = append(index.Lists, instagram.WithThread(t, id))
 		case "lfi.g":
 			index.Lists = append(index.Lists, lfi.Group(t, id))
 		case "peertube.a":
