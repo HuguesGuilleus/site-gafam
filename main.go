@@ -20,6 +20,7 @@ func main() {
 		"api-cdn.arte.tv":   time.Second * 3,
 		"api.arte.tv":       time.Second * 30,
 		"www.instagram.com": time.Second * 2,
+		"www.threads.net":   time.Second * 2,
 
 		"actionpopulaire.fr":             0,
 		"arte-uhd-cmafhls.akamaized.net": 0,
@@ -56,6 +57,7 @@ func canClearCache(m *fetch.Meta) time.Duration {
 	duration := map[string]time.Duration{
 		"arte.tv":           time.Hour * 24 * 2,
 		"www.instagram.com": time.Hour * 24 * 2,
+		"www.threads.net":   time.Hour * 24 * 2,
 		"www.tiktok.com":    time.Hour * 24 * 2,
 
 		"api-cdn.arte.tv":           time.Hour * 24 * 365,

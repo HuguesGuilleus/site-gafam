@@ -48,7 +48,7 @@ func Channel(t *tool.Tool, handle string) *common.List {
 }
 
 func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List {
-	x := tool.FetchAll(t, fetch.R("", url, nil))
+	data := tool.FetchAll(t, fetch.URL(url))
 	dto := struct {
 		Channel struct {
 			Title       string `xml:"title"`
@@ -75,7 +75,7 @@ func fetchData(t *tool.Tool, handle, handleName, host, url string) *common.List 
 			} `xml:"item"`
 		} `xml:"channel"`
 	}{}
-	if err := xml.Unmarshal(x, &dto); err != nil {
+	if err := xml.Unmarshal(data, &dto); err != nil {
 		t.Warn("xml.decode", "url", url, "err", err.Error())
 		return nil
 	}

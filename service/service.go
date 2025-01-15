@@ -9,6 +9,7 @@ import (
 	"frontend-gafam/service/instagram"
 	"frontend-gafam/service/lfi"
 	"frontend-gafam/service/peertube"
+	"frontend-gafam/service/rss"
 	"frontend-gafam/service/tiktok"
 	"frontend-gafam/service/twitch"
 	"frontend-gafam/service/youtube"
@@ -52,6 +53,8 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, peertube.User(t, id))
 		case "peertube.c":
 			index.Lists = append(index.Lists, peertube.Channel(t, id))
+		case "rss":
+			index.Lists = append(index.Lists, rss.Fetch(t, id))
 		case "tiktok.ch":
 			index.Lists = append(index.Lists, tiktok.Channel(t, id))
 		case "twitch.ch":
