@@ -35,7 +35,6 @@ type Item struct {
 	View        uint
 	IsVideo     bool
 
-	// For video
 	Poster       []byte
 	PosterAnnex  [][]byte
 	PosterWidth  string

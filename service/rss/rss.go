@@ -15,8 +15,25 @@ import (
 )
 
 func Fetch(t *tool.Tool, url string) *common.List {
-	r := fetch.URL(url)
+	dto := struct{ XMLName xml.Name }{}
+	data := tool.FetchAll(t, fetch.URL(url))
+	if err := xml.Unmarshal(data, &dto); err != nil {
+		t.Warn("xml.decode", "url", url, "err", err.Error())
+		return nil
+	}
 
+	switch dto.XMLName.Local {
+	case "rss":
+		return rss(t, url, data)
+	case "feed":
+		return atom(t, url, data)
+	default:
+		fmt.Println("rss.unknowntype", "type", dto.XMLName.Local)
+		return nil
+	}
+}
+
+func rss(t *tool.Tool, url string, data []byte) *common.List {
 	dto := struct {
 		Channel struct {
 			Title       string `xml:"title"`
@@ -41,7 +58,6 @@ func Fetch(t *tool.Tool, url string) *common.List {
 		} `xml:"channel"`
 	}{}
 
-	data := tool.FetchAll(t, r)
 	if err := xml.Unmarshal(data, &dto); err != nil {
 		t.Warn("xml.decode", "url", url, "err", err.Error())
 		return nil
@@ -109,7 +125,12 @@ type rssTime struct {
 }
 
 func (t *rssTime) UnmarshalText(text []byte) (err error) {
-	t.Time, err = time.Parse(time.RFC1123Z, string(text))
+	s := string(text)
+	if strings.HasSuffix(s, " GMT") {
+		t.Time, err = time.Parse(time.RFC1123, s)
+	} else {
+		t.Time, err = time.Parse(time.RFC1123Z, s)
+	}
 	return
 }
 
