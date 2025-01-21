@@ -9,18 +9,18 @@ import (
 )
 
 func ChannelRSS(t *tool.Tool, id string) *common.List {
-	return fetchRSS(t,
+	return fetchRSS(t, id,
 		"https://youtube.com/channel/"+id,
 		"https://www.youtube.com/feeds/videos.xml?channel_id="+id)
 }
 
 func PlaylistRSS(t *tool.Tool, id string) *common.List {
-	return fetchRSS(t,
+	return fetchRSS(t, id,
 		"https://www.youtube.com/playlist?list="+id,
 		"https://www.youtube.com/feeds/videos.xml?playlist_id="+id)
 }
 
-func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
+func fetchRSS(t *tool.Tool, id, humanURL, dataURL string) *common.List {
 	data := tool.FetchAll(t, fetch.R("", dataURL, nil))
 	dto := struct {
 		Title string `xml:"title"`
@@ -71,7 +71,7 @@ func fetchRSS(t *tool.Tool, humanURL, dataURL string) *common.List {
 
 	return &common.List{
 		Host:  "yt",
-		ID:    dto.ID,
+		ID:    id,
 		URL:   humanURL,
 		Title: dto.Title,
 		Items: items,
