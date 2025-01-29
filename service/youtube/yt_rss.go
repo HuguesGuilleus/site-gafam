@@ -85,6 +85,7 @@ func fetchPoster(t *tool.Tool, id string) (poster []byte, width, height string) 
 
 func genSources(id string) []common.Source {
 	return []common.Source{
+		{Name: "deturl", URL: "https://deturl.com/?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + id},
 		{Name: "9xbuddy", URL: "http://9xbuddy.com/download?url=http://www.youtube.com/watch?v=" + id},
 		{Name: "SaveFrom", URL: "http://en.savefrom.net/#url=http://www.youtube.com/watch?v=" + id},
 	}
