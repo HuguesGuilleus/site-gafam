@@ -34,8 +34,9 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 
 	for _, u := range urls {
 		t.Log(context.Background(), slog.LevelInfo+2, "target", "u", u)
-		protoAndHandle, id, _ := strings.Cut(u, ":")
-		proto, _, _ := strings.Cut(protoAndHandle, "#")
+		proto, id, _ := strings.Cut(u, ":")
+		proto, _, _ = strings.Cut(proto, "#")
+		id, _, _ = strings.Cut(id, "#")
 		switch proto {
 		case "arte.cat":
 			index.Lists = append(index.Lists, arte.Category(t, id)...)

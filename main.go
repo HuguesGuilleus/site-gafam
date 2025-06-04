@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"frontend-gafam/service"
 	"log/slog"
 	"os"
@@ -36,7 +37,10 @@ func main() {
 		t.Logger.Log(context.Background(), slog.LevelInfo+2, "duration", "d", time.Since(begin))
 	}(time.Now())
 
-	fetch.ClearCache(flag.CommandLine.Lookup("cache").Value.String(), canClearCache)
+	err := fetch.ClearCache(flag.CommandLine.Lookup("cache").Value.String(), canClearCache)
+	if err != nil {
+		t.Error("cache.clean", "err", err.Error())
+	}
 
 	targets := map[string][]string{}
 	for _, arg := range flag.Args() {
@@ -51,10 +55,16 @@ func main() {
 	}
 
 	service.Do(t, targets)
+
+	if err := fetch.Debug("cache", debugKeep); err != nil {
+		fmt.Println("err:", err)
+	}
 }
 
 func canClearCache(m *fetch.Meta) time.Duration {
 	duration := map[string]time.Duration{
+		"www.youtube.com": time.Minute * 15,
+
 		"arte.tv":           time.Hour * 24 * 2,
 		"www.instagram.com": time.Hour * 24 * 2,
 		"www.threads.net":   time.Hour * 24 * 2,
@@ -82,4 +92,19 @@ func canClearCache(m *fetch.Meta) time.Duration {
 	}
 
 	return time.Hour * 2
+}
+
+func debugKeep(host string) int {
+	switch host {
+	case "actionpopulaire.fr":
+		return fetch.DebugKeepData
+	case "cdn.arteradio.com", "www.arteradio.com":
+		return fetch.DebugKeepIgnore
+	}
+
+	if strings.Contains(host, "arte") {
+		return fetch.DebugKeepIndex
+	}
+
+	return fetch.DebugKeepIgnore
 }
