@@ -97,7 +97,12 @@ func rss(t *tool.Tool, url string, data []byte) *common.List {
 
 			if dto.Duration == "" {
 				item.Duration = time.Duration(dto.Enclosure.Length) * time.Second
-			} else if durationColon.MatchString(dto.Duration) {
+			} else if durationColon2.MatchString(dto.Duration) {
+				m, s := 0, 0
+				fmt.Sscanf(dto.Duration, "%d:%d", &m, &s)
+				item.Duration = time.Duration(m)*time.Minute +
+					time.Duration(s)*time.Second
+			} else if durationColon3.MatchString(dto.Duration) {
 				h, m, s := 0, 0, 0
 				fmt.Sscanf(dto.Duration, "%d:%d:%d", &h, &m, &s)
 				item.Duration = time.Duration(h)*time.Hour +
@@ -117,7 +122,8 @@ func rss(t *tool.Tool, url string, data []byte) *common.List {
 	return list
 }
 
-var durationColon = regexp.MustCompile(`^\d\d:\d\d:\d\d$`)
+var durationColon3 = regexp.MustCompile(`^\d\d:\d\d:\d\d$`)
+var durationColon2 = regexp.MustCompile(`^\d\d:\d\d$`)
 var durationInt = regexp.MustCompile(`^\d+"?$`)
 
 type rssTime struct {
