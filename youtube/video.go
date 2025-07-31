@@ -1,8 +1,8 @@
 package youtube
 
 import (
-	"sniffle/tool"
-	"sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 // Fetch and save the thunbail of the video

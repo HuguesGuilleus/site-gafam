@@ -1,12 +1,13 @@
 package youtube
 
 import (
-	"frontend-gafam/service/common"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func ChartsTitles(t *tool.Tool, country string) *common.List {

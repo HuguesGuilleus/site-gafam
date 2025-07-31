@@ -1,12 +1,13 @@
 package twitch
 
 import (
-	"frontend-gafam/service/common"
 	"net/http"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strconv"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 const (

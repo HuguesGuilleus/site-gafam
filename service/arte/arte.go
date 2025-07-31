@@ -3,13 +3,14 @@ package arte
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"frontend-gafam/service/common"
 	"regexp"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func Category(t *tool.Tool, id string) []*common.List {
@@ -211,14 +212,8 @@ func fetchSources(t *tool.Tool, item *common.Item) {
 		return
 	}
 
-	poster, width, height := common.FetchPoster(t, dto.Data.Attributes.Metadata.Images[0].URL)
-	item.Poster = poster
-	item.PosterWidth = width
-	item.PosterHeight = height
+	item.Poster, item.PosterWidth, item.PosterHeight = common.FetchPoster(t, dto.Data.Attributes.Metadata.Images[0].URL)
 
-	var m3u8Urls = regexp.MustCompile(`https\://[\w/\-+\.]+\.(m3u8|vtt)`)
-	var m3u8Name = regexp.MustCompile(`.*/[0-9A-Z\-]+_([\w\-]+)\.(mp4|vtt)$`)
-	var m3u8vtt = regexp.MustCompile(`.*/[0-9A-Z\-]+_st[\w\-]+\.vtt$`)
 	for _, streams := range dto.Data.Attributes.Streams {
 		item.Sources = append(item.Sources, common.Source{
 			Name: "m3u8",
@@ -242,3 +237,9 @@ func fetchSources(t *tool.Tool, item *common.Item) {
 		}
 	}
 }
+
+var (
+	m3u8Urls = regexp.MustCompile(`https\://[\w/\-+\.]+\.(m3u8|vtt)`)
+	m3u8Name = regexp.MustCompile(`.*/[0-9A-Z\-]+_([\w\-]+)\.(mp4|vtt)$`)
+	m3u8vtt  = regexp.MustCompile(`.*/[0-9A-Z\-]+_st[\w\-]+\.vtt$`)
+)

@@ -5,13 +5,14 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"frontend-gafam/service/common"
 	"regexp"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func Fetch(t *tool.Tool, url string) *common.List {

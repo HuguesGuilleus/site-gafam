@@ -2,11 +2,11 @@ package youtube
 
 import (
 	_ "embed"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"testing"
 	"time"
 
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,9 +14,9 @@ import (
 var playlistHTML []byte
 
 func TestPlaylist(t *testing.T) {
-	_, to := tool.NewTestTool(map[string]*fetch.TestResponse{
-		"https://www.youtube.com/playlist?list=gta": fetch.TR(200, playlistHTML),
-	})
+	_, to := tool.NewTestTool(fetch.Test(
+		fetch.URL("https://www.youtube.com/playlist?list=gta").T(200, playlistHTML),
+	))
 	p := FetchPlaylist(to, "gta")
 	assert.NotNil(t, p)
 	p.Items = p.Items[:1]

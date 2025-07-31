@@ -4,15 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"frontend-gafam/service"
 	"log/slog"
 	"os"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strings"
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/HuguesGuilleus/site-gafam/service"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/writefs"
 )
 
 func main() {
@@ -37,7 +38,8 @@ func main() {
 		t.Logger.Log(context.Background(), slog.LevelInfo+2, "duration", "d", time.Since(begin))
 	}(time.Now())
 
-	err := fetch.ClearCache(flag.CommandLine.Lookup("cache").Value.String(), canClearCache)
+	cache := writefs.Os(flag.CommandLine.Lookup("cache").Value.String())
+	err := fetch.ClearCache(cache, canClearCache)
 	if err != nil {
 		t.Error("cache.clean", "err", err.Error())
 	}
@@ -56,7 +58,7 @@ func main() {
 
 	service.Do(t, targets)
 
-	if err := fetch.Debug("cache", debugKeep); err != nil {
+	if err := fetch.Debug(cache, debugKeep); err != nil {
 		fmt.Println("err:", err)
 	}
 }
@@ -94,12 +96,17 @@ func canClearCache(m *fetch.Meta) time.Duration {
 	return time.Hour * 2
 }
 
-func debugKeep(host string) int {
+func debugKeep(m *fetch.Meta) int {
+	host := m.URL.Host
 	switch host {
 	case "actionpopulaire.fr":
 		return fetch.DebugKeepData
 	case "cdn.arteradio.com", "www.arteradio.com":
 		return fetch.DebugKeepIgnore
+	}
+
+	if host == "api.arte.tv" {
+		return fetch.DebugKeepData
 	}
 
 	if strings.Contains(host, "arte") {

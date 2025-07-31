@@ -3,21 +3,22 @@ package service
 import (
 	"cmp"
 	"context"
-	"frontend-gafam/service/arte"
-	"frontend-gafam/service/common"
-	"frontend-gafam/service/front"
-	"frontend-gafam/service/instagram"
-	"frontend-gafam/service/lfi"
-	"frontend-gafam/service/peertube"
-	"frontend-gafam/service/rss"
-	"frontend-gafam/service/tiktok"
-	"frontend-gafam/service/twitch"
-	"frontend-gafam/service/youtube"
 	"log/slog"
 	"slices"
-	"sniffle/tool"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/arte"
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/site-gafam/service/front"
+	"github.com/HuguesGuilleus/site-gafam/service/instagram"
+	"github.com/HuguesGuilleus/site-gafam/service/lfi"
+	"github.com/HuguesGuilleus/site-gafam/service/peertube"
+	"github.com/HuguesGuilleus/site-gafam/service/rss"
+	"github.com/HuguesGuilleus/site-gafam/service/tiktok"
+	"github.com/HuguesGuilleus/site-gafam/service/twitch"
+	"github.com/HuguesGuilleus/site-gafam/service/youtube"
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 func Do(t *tool.Tool, targets map[string][]string) {

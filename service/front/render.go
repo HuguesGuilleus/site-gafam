@@ -2,13 +2,14 @@ package front
 
 import (
 	"fmt"
-	"frontend-gafam/service/common"
 	"maps"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/render"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func RenderTitles(t *tool.Tool, titles map[string][]string) {

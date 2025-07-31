@@ -2,9 +2,10 @@ package rss
 
 import (
 	"encoding/xml"
-	"frontend-gafam/service/common"
-	"sniffle/tool"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 func atom(t *tool.Tool, url string, data []byte) *common.List {

@@ -3,12 +3,13 @@ package youtube
 import (
 	"bytes"
 	"encoding/json"
-	"frontend-gafam/asset"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/asset"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Playlist struct {

@@ -2,14 +2,15 @@ package youtube
 
 import (
 	"cmp"
-	"frontend-gafam/asset"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/asset"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Todo struct {

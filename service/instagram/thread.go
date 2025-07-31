@@ -2,10 +2,11 @@ package instagram
 
 import (
 	"bytes"
-	"frontend-gafam/service/common"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strings"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func WithThread(t *tool.Tool, id string) (list *common.List) {

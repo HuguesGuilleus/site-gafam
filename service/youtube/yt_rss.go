@@ -2,10 +2,11 @@ package youtube
 
 import (
 	"encoding/xml"
-	"frontend-gafam/service/common"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func ChannelRSS(t *tool.Tool, id string) *common.List {

@@ -3,12 +3,13 @@ package peertube
 import (
 	"encoding/xml"
 	"fmt"
-	"frontend-gafam/service/common"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func User(t *tool.Tool, handle string) *common.List {

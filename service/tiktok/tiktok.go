@@ -2,13 +2,14 @@ package tiktok
 
 import (
 	"encoding/json"
-	"frontend-gafam/service/common"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func Channel(t *tool.Tool, id string) *common.List {

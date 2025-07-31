@@ -3,8 +3,8 @@ package asset
 import (
 	"bytes"
 	_ "embed"
-	"sniffle/tool/render"
 
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 	"github.com/tdewolff/minify/css"
 	"github.com/tdewolff/minify/js"
 )

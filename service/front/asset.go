@@ -2,8 +2,9 @@ package front
 
 import (
 	"embed"
-	"sniffle/tool/fronttool"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool/fronttool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 //go:embed asset.css

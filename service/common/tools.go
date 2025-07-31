@@ -8,10 +8,11 @@ import (
 	"image/png"
 	_ "image/png"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strconv"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
 func FetchPoster(t *tool.Tool, url string) (poster []byte, width, height string) {

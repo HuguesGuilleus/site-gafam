@@ -3,14 +3,15 @@ package youtube
 import (
 	"encoding/json"
 	"encoding/xml"
-	"frontend-gafam/asset"
 	"slices"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"sniffle/tool/render"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/HuguesGuilleus/site-gafam/asset"
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 type Index struct {
