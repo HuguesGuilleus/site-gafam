@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/HuguesGuilleus/site-gafam/service/arte"
@@ -23,61 +24,39 @@ import (
 )
 
 func Do(t *tool.Tool, targets map[string][]string) {
+	data := make(map[string][]*common.List)
+	for _, urls := range targets {
+		for _, u := range urls {
+			data[u] = nil
+		}
+	}
+	wg := sync.WaitGroup{}
+	mutex := sync.Mutex{}
+	for u := range data {
+		go func(u string) {
+			defer wg.Done()
+			l := fetchOne(t, u)
+			mutex.Lock()
+			defer mutex.Unlock()
+			data[u] = l
+		}(u)
+	}
+	wg.Add(len(data))
+	wg.Wait()
+
 	for title, urls := range targets {
-		index := fetchAll(t, title, urls)
+		index := mergeIndex(title, urls, data)
 		front.Render(t, strings.ToLower(title), &index)
 	}
 	front.RenderTitles(t, targets)
 }
 
-func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
+func mergeIndex(title string, urls []string, data map[string][]*common.List) (index common.Index) {
 	index.Title = title
-	index.Lists = make([]*common.List, 0, len(urls))
+	index.Lists = make([]*common.List, 0)
 
 	for _, u := range urls {
-		t.Log(context.Background(), slog.LevelInfo+2, "target", "u", u)
-		proto, id, _ := strings.Cut(u, ":")
-		proto, _, _ = strings.Cut(proto, "#")
-		id, _, _ = strings.Cut(id, "#")
-		switch proto {
-		case "arte.cat":
-			index.Lists = append(index.Lists, arte.Category(t, id)...)
-		case "arte.ch":
-			index.Lists = append(index.Lists, arte.Channel(t, id))
-		case "arte.li":
-			index.Lists = append(index.Lists, arte.List(t, id)...)
-		case "discogs":
-			index.Lists = append(index.Lists, discogs.ArtistStrict(t, id))
-		case "discogs+":
-			index.Lists = append(index.Lists, discogs.ArtistExtra(t, id))
-		case "insta.ch":
-			index.Lists = append(index.Lists, instagram.User(t, id))
-		case "insta.tr+ch":
-			index.Lists = append(index.Lists, instagram.WithThread(t, id))
-		case "lfi.g":
-			index.Lists = append(index.Lists, lfi.Group(t, id))
-		case "peertube.a":
-			index.Lists = append(index.Lists, peertube.User(t, id))
-		case "peertube.c":
-			index.Lists = append(index.Lists, peertube.Channel(t, id))
-		case "rss":
-			index.Lists = append(index.Lists, rss.Fetch(t, id))
-		case "tiktok.ch":
-			index.Lists = append(index.Lists, tiktok.Channel(t, id))
-		case "twitch.ch":
-			index.Lists = append(index.Lists, twitch.Channel(t, id))
-		case "twitch.te":
-			index.Lists = append(index.Lists, twitch.Team(t, id)...)
-		case "yt.charts.titles":
-			index.Lists = append(index.Lists, youtube.ChartsTitles(t, id))
-		case "yt.ch":
-			index.Lists = append(index.Lists, youtube.ChannelRSS(t, id))
-		case "yt.pl":
-			index.Lists = append(index.Lists, youtube.PlaylistRSS(t, id))
-		default:
-			t.Warn("unknown.urlproto", "proto", proto, "id", id)
-			continue
-		}
+		index.Lists = append(index.Lists, data[u]...)
 	}
 	index.Lists = slices.DeleteFunc(index.Lists, func(list *common.List) bool { return list == nil })
 	slices.SortStableFunc(index.Lists, func(a, b *common.List) int {
@@ -94,9 +73,53 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 		}
 	}
 	slices.SortFunc(index.News, func(a, b *common.Item) int { return a.Published.Compare(b.Published) })
-	index.News = slices.CompactFunc(index.News, func(a, b *common.Item) bool {
-		return a.URL == b.URL
-	})
+	index.News = slices.CompactFunc(index.News, func(a, b *common.Item) bool { return a.URL == b.URL })
 
 	return
+}
+
+func fetchOne(t *tool.Tool, u string) []*common.List {
+	defer t.Log(context.Background(), slog.LevelInfo+2, "target", "u", u)
+	proto, id, _ := strings.Cut(u, ":")
+	proto, _, _ = strings.Cut(proto, "#")
+	id, _, _ = strings.Cut(id, "#")
+	switch proto {
+	case "arte.cat":
+		return arte.Category(t, id)
+	case "arte.ch":
+		return []*common.List{arte.Channel(t, id)}
+	case "arte.li":
+		return arte.List(t, id)
+	case "discogs":
+		return []*common.List{discogs.ArtistStrict(t, id)}
+	case "discogs+":
+		return []*common.List{discogs.ArtistExtra(t, id)}
+	case "insta.ch":
+		return []*common.List{instagram.User(t, id)}
+	case "insta.tr+ch":
+		return []*common.List{instagram.WithThread(t, id)}
+	case "lfi.g":
+		return []*common.List{lfi.Group(t, id)}
+	case "peertube.a":
+		return []*common.List{peertube.User(t, id)}
+	case "peertube.c":
+		return []*common.List{peertube.Channel(t, id)}
+	case "rss":
+		return []*common.List{rss.Fetch(t, id)}
+	case "tiktok.ch":
+		return []*common.List{tiktok.Channel(t, id)}
+	case "twitch.ch":
+		return []*common.List{twitch.Channel(t, id)}
+	case "twitch.te":
+		return twitch.Team(t, id)
+	case "yt.charts.titles":
+		return []*common.List{youtube.ChartsTitles(t, id)}
+	case "yt.ch":
+		return []*common.List{youtube.ChannelRSS(t, id)}
+	case "yt.pl":
+		return []*common.List{youtube.PlaylistRSS(t, id)}
+	default:
+		t.Warn("unknown.urlproto", "proto", proto, "id", id)
+		return nil
+	}
 }
