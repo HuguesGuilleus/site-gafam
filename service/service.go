@@ -10,6 +10,7 @@ import (
 
 	"github.com/HuguesGuilleus/site-gafam/service/arte"
 	"github.com/HuguesGuilleus/site-gafam/service/common"
+	"github.com/HuguesGuilleus/site-gafam/service/discogs"
 	"github.com/HuguesGuilleus/site-gafam/service/front"
 	"github.com/HuguesGuilleus/site-gafam/service/instagram"
 	"github.com/HuguesGuilleus/site-gafam/service/lfi"
@@ -45,6 +46,10 @@ func fetchAll(t *tool.Tool, title string, urls []string) (index common.Index) {
 			index.Lists = append(index.Lists, arte.Channel(t, id))
 		case "arte.li":
 			index.Lists = append(index.Lists, arte.List(t, id)...)
+		case "discogs":
+			index.Lists = append(index.Lists, discogs.ArtistStrict(t, id))
+		case "discogs+":
+			index.Lists = append(index.Lists, discogs.ArtistExtra(t, id))
 		case "insta.ch":
 			index.Lists = append(index.Lists, instagram.User(t, id))
 		case "insta.tr+ch":

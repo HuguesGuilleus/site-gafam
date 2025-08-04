@@ -23,6 +23,8 @@ func main() {
 		"api.arte.tv":       time.Second * 30,
 		"www.instagram.com": time.Second * 2,
 		"www.threads.net":   time.Second * 2,
+		"api.discogs.com":   time.Minute / 24,
+		"www.discogs.com":   time.Minute / 24,
 
 		"actionpopulaire.fr":             0,
 		"arte-uhd-cmafhls.akamaized.net": 0,
@@ -74,15 +76,21 @@ func canClearCache(m *fetch.Meta) time.Duration {
 
 		"api-cdn.arte.tv":           time.Hour * 24 * 365,
 		"api.arte.tv":               time.Hour * 24 * 365,
+		"i.discogs.com":             time.Hour * 24 * 365,
 		"img.youtube.com":           time.Hour * 24 * 365,
 		"lh3.googleusercontent.com": time.Hour * 24 * 365,
 		"static-cdn.jtvnw.net":      time.Hour * 24 * 365,
+		"www.discogs.com":           time.Hour * 24 * 365,
 	}[m.URL.Host]
 	if duration > 0 {
 		return duration
 	}
 
 	switch {
+	case m.URL.Host == "api.discogs.com" && strings.HasPrefix(m.URL.Path, "/artists/"):
+		return time.Hour * 24 * 7
+	case m.URL.Host == "api.discogs.com":
+		return time.Hour * 24 * 365
 	case strings.HasSuffix(m.URL.Host, ".akamaized.net"): // Arte
 		return time.Hour * 24 * 365
 	case strings.HasSuffix(m.URL.Host, ".cdninstagram.com"): // Instagram
@@ -99,14 +107,16 @@ func canClearCache(m *fetch.Meta) time.Duration {
 func debugKeep(m *fetch.Meta) int {
 	host := m.URL.Host
 	switch host {
+	case "api.discogs.com":
+		return fetch.DebugKeepData
+	case "www.discogs.com":
+		return fetch.DebugKeepData
 	case "actionpopulaire.fr":
+		return fetch.DebugKeepData
+	case "api.arte.tv":
 		return fetch.DebugKeepData
 	case "cdn.arteradio.com", "www.arteradio.com":
 		return fetch.DebugKeepIgnore
-	}
-
-	if host == "api.arte.tv" {
-		return fetch.DebugKeepData
 	}
 
 	if strings.Contains(host, "arte") {
