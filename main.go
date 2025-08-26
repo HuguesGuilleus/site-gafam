@@ -107,15 +107,17 @@ func canClearCache(m *fetch.Meta) time.Duration {
 func debugKeep(m *fetch.Meta) int {
 	host := m.URL.Host
 	switch host {
-	case "api.discogs.com":
+	case "i.discogs.com":
+		return fetch.DebugKeepIgnore
+	case "img.youtube.com":
+		return fetch.DebugKeepIgnore
+	case "static-cdn.jtvnw.net":
+		return fetch.DebugKeepIgnore
+	case "":
 		return fetch.DebugKeepData
-	case "www.discogs.com":
-		return fetch.DebugKeepData
-	case "actionpopulaire.fr":
-		return fetch.DebugKeepData
-	case "api.arte.tv":
-		return fetch.DebugKeepData
-	case "cdn.arteradio.com", "www.arteradio.com":
+	}
+
+	if strings.HasSuffix(host, "tiktokcdn-eu.com") {
 		return fetch.DebugKeepIgnore
 	}
 
@@ -123,5 +125,5 @@ func debugKeep(m *fetch.Meta) int {
 		return fetch.DebugKeepIndex
 	}
 
-	return fetch.DebugKeepIgnore
+	return fetch.DebugKeepIndex
 }

@@ -15,9 +15,14 @@ import (
 	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 )
 
+const (
+	UserAgentKey   = "User-Agent"
+	UserAgentValue = "Mozilla/5.0 (X11; Linux x86_64; rv:141.0) Gecko/20100101 Firefox/141.0"
+)
+
 func Fetch(t *tool.Tool, url string) *common.List {
 	dto := struct{ XMLName xml.Name }{}
-	data := tool.FetchAll(t, fetch.URL(url))
+	data := tool.FetchAll(t, fetch.R("", url, nil, UserAgentKey, UserAgentValue))
 	if err := xml.Unmarshal(data, &dto); err != nil {
 		t.Warn("xml.decode", "url", url, "err", err.Error())
 		return nil
@@ -29,7 +34,7 @@ func Fetch(t *tool.Tool, url string) *common.List {
 	case "feed":
 		return atom(t, url, data)
 	default:
-		fmt.Println("rss.unknowntype", "type", dto.XMLName.Local)
+		t.Warn("rss.unknowntype", "type", dto.XMLName.Local)
 		return nil
 	}
 }
@@ -67,10 +72,12 @@ func rss(t *tool.Tool, url string, data []byte) *common.List {
 	list := &common.List{
 		Host:        "rss",
 		ID:          genID(url),
-		URL:         dto.Channel.Link,
+		URL:         url,
 		Title:       dto.Channel.Title,
 		Description: common.Description(dto.Channel.Description),
 		Items:       make([]*common.Item, len(dto.Channel.Item)),
+
+		JSON: data,
 	}
 	for i, dto := range dto.Channel.Item {
 		poster, posterWidth, posterHeight := common.FetchPoster(t, dto.Image.Href)
