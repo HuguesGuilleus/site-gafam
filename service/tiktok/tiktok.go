@@ -89,10 +89,11 @@ func fetchList(t *tool.Tool, url string) []*common.Item {
 		poster, width, height := common.FetchPoster(t, dto.Video.Cover)
 
 		author := dto.Author.UniqueId
+		url := "https://tiktok.com/@" + author + "/video/" + dto.ID
 		items = append(items, &common.Item{
 			Host:      "tiktok",
 			ID:        dto.ID,
-			URL:       "https://tiktok.com/@" + author + "/video/" + dto.ID,
+			URL:       url,
 			Title:     dto.Desc,
 			Author:    author,
 			Published: time.Unix(dto.CreateTime, 0),
@@ -101,6 +102,10 @@ func fetchList(t *tool.Tool, url string) []*common.Item {
 			Poster:       poster,
 			PosterWidth:  width,
 			PosterHeight: height,
+
+			Sources: []common.Source{
+				{Name: "SaveFrom", URL: "http://en.savefrom.net/#url=" + url},
+			},
 		})
 	}
 	return items
